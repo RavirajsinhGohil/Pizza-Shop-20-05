@@ -1,0 +1,75 @@
+@model PizzaShop.Entity.ViewModel.OrderItemForRowViewModel
+
+<!-- ➜ one flex row that always fills 100 %  -->
+<div id="order-item-row-@Model.Index" class="items d-flex flex-wrap align-items-center fw-medium w-100 py-2 border-bottom"
+        data-item-id="@Model.ItemId" data-ready-qty="@Model.ReadyQuantity">
+
+    <div class="flex-grow-1 pe-2">
+        <div class="accordion accordion-flush w-100" id="acc-@Model.Index">
+            <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="head-@Model.Index" onclick="openItemInstructionModal(@Model.OrderId ,@Model.ItemId)">
+                    <button class="accordion-button cart-item-btn d-flex align-items-center gap-2 collapsed"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#col-@Model.Index" aria-expanded="false"
+                        aria-controls="col-@Model.Index" onclick="event.stopPropagation();" style="width: fit-content;">
+                        <i class="fa-solid fa-chevron-right small"></i>
+                        <span class="item-name fw-bold" style="font-weight: bold !important; color: black !important;">@Model.ItemName</span>
+                    </button>
+                </h2>
+
+                <div id="col-@Model.Index" class="accordion-collapse collapse" aria-labelledby="head-@Model.Index"
+                    data-bs-parent="#acc-@Model.Index">
+                    <div class="accordion-body pt-0 ps-4">
+                        @if (Model.SelectedModifiers?.Any() == true)
+                        {
+                            <ul class=" small mb-0">
+                                @foreach (var mod in Model.SelectedModifiers)
+                                {
+                                    <li class="d-flex justify-content-between w-25 modifier" data-modifier-id="@mod.ModifierId"
+                                        data-modifier-name="@mod.ModifierName"
+                                        data-modifier-price="@mod.Rate">
+                                        <span>@mod.ModifierName</span>
+                                        <span>₹@mod.Rate</span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Parent element for a single cart row *@
+    <div class="cart-row d-flex align-items-center" data-price="@Model.Rate" 
+        data-modprice="@Model.ModifiersTotal"
+        data-key="@Model.Index"> <!-- unique key -->
+
+        <div class="px-2">
+            <span>@Model.ReadyQuantity</span>
+            <input type="hidden" class="available-qty" value="@Model.ReadyQuantity" >
+            <div class="qty-box d-flex align-items-center">
+                <button class="btn btn-light" type="button"
+                    onclick="changeQuantity(@Model.Index, -1, @Model.MaxQuantity)">-</button>
+
+                <input id="quantityInput_@Model.Index" class="qty-input text-center" onchange="quantityChange(event)" data-maxQuantity="@Model.MaxQuantity" data-currentValue="@Model.Quantity" type="number" max="@Model.MaxQuantity" value="@Model.Quantity" style="width: 36px;" />
+
+                <button class="btn btn-light" type="button"
+                        onclick="changeQuantity(@Model.Index, 1, @Model.MaxQuantity)">
+                    +
+                </button>
+            </div>
+        </div>
+
+        <div class="px-2 text-end row-total">
+            <div>₹@Model.Rate</div>
+            @if (Model.ModifiersTotal > 0)
+            {
+                <div class="small text-secondary">₹@Model.ModifiersTotal</div>
+            }
+        </div>
+    </div>
+
+    <div class="ps-2 text-center">
+        <i class="bi bi-trash cart-trash" role="button" onclick="removeItem(@Model.Index)"></i>
+    </div>
+</div>

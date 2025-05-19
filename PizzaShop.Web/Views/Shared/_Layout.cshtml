@@ -1,0 +1,208 @@
+﻿@using PizzaShop.Service.Helper
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var roleId = Context.Request.Cookies["RoleId"];
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="icon" type="image/x-icon" href="~/images/logos/pizzashop_logo.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="main">
+        <div class="offcanvas offcanvas-start d-lg-block show border-none" style="border-right: 0px !important;"
+            tabindex="-1" id="sidebar" data-bs-scroll="true" data-bs-backdrop="false"
+            aria-controls="offcanvasScrolling">
+
+            <div class="offcanvas-body" style="overflow: hidden;">
+                <div class="d-flex align-items-center justify-content-center">
+                    <img class="img-fluid pizza_shop_logo" src="~/images/logos/pizzashop_logo.png"
+                        alt="Pizza shop logo not found">
+                    <div class="title fs-5 fw-bold">PIZZASHOP</div>
+                    <button type="button" class="btn-close d-md-none" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="d-flex flex-column mt-3 ">
+                    <a asp-controller="Dashboard" asp-action="Index" data-id="/Dashboard/Index"
+                        class="dashboard_btn sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                        <img class="me-1" height="25" src="~/images/icons/border-all.svg"
+                            alt="Dashboard image not found">
+                        <div>Dashboard</div>
+                    </a>
+                    @* @if(permissionsUser.CanView)
+                    { *@
+                        <a asp-controller="User" asp-action="UserList" data-id="/User/UserList"
+                            class="users_btn sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                            <img class="me-1" height="25" src="~/images/icons/people.svg" alt="">
+                            <div>Users</div>
+                        </a>
+                    @* } *@
+                    <a asp-controller="User" asp-action="Roles" data-id="/User/Roles"
+                        class="role_permission_btn  sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                        <img class="me-1" height="25" src="~/images/icons/person-gear.svg" alt="">
+                        <div>Role and Permission</div>
+                    </a>
+                    @* @if(permissionsMenu.CanView)
+                    { *@
+                        <a asp-controller="Menu" asp-action="Menu" data-id="/Menu"
+                            class="menu_btn sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                            <img class="me-1" height="25" src="~/images/icons/clipboard.svg" alt="">
+                            <div>Menu</div>
+                        </a>
+                    @* } *@
+                    <a asp-controller="Section" asp-action="Index" data-id="/Section/Index"
+                        class="table_section_btn sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                        <img class="me-1" height="25" src="~/images/icons/square.svg" alt="">
+                        <div>Table and Section</div>
+                    </a>
+                    <a asp-controller="Tax" asp-action="Index" data-id="/Tax/Index"
+                        class="taxes_fees_btn sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                        <img class="me-1" height="25" src="~/images/icons/cash-coin.svg" alt="">
+                        <div>Taxes And Fees</div>
+                    </a>
+                    <a asp-controller="Orders" asp-action="Orders" data-id="/Orders/Orders"
+                        class="orders_btn sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                        <img class="me-1" height="25" src="~/images/icons/clipboard-check.svg" alt="">
+                        <div>Orders</div>
+                    </a>
+                    <a asp-controller="Customers" asp-action="Customers" data-id="/Customers/Customers"
+                        class="customers_btn sidebar_btn mt-4 fw-bold d-flex align-items-center">
+                        <img class="me-1" height="25" src="~/images/icons/person-rolodex.svg" alt="">
+                        <div>Customers</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="user_body">
+        <div class="status d-flex align-items-center justify-content-between h-10">
+            <a class="btn btn-primary bg-white d-lg-block toggle_btn ms-2" data-bs-toggle="offcanvas" href="#sidebar"
+                role="button" aria-controls="sidebar">
+                <div class="d-flex align-items-center justify-content-center">
+                    <img class="img-fluid pizza_shop_logo" src="~/images/logos/pizzashop_logo.png"
+                        alt="Pizza shop logo not found">
+                </div>
+            </a>
+            <div>
+                @if (roleId != "1")
+                {
+                    <a asp-controller="OrderApp" asp-action="TableMenu"><img class="img-fluid me-3 "
+                            style="filter:invert(1) ;height: 30px !important; " src="~/images/Download/phone.svg"
+                            alt=""></a>
+                }
+                <img class=" dropdown-toggle me-5 rounded-circle" data-bs-toggle="dropdown" aria-expanded="false"
+                    style="cursor: pointer;" width="40" height="40" src="@Context.Request.Cookies["Image"]" alt="">
+                <ul class="dropdown-menu dropdown-menu-end ">
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center">
+                            <img class="me-2 rounded-circle" width="30" height="30"
+                                src="@Context.Request.Cookies["Image"]" alt="">
+                            @Context.Request.Cookies["Username"]
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Profile"
+                            asp-action="Profile">
+                            <img class="me-2 rounded-circle" width="30" height="30" src="~/images/Default_pfp.svg.png"
+                                alt="1">
+                            My profile
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Profile"
+                            asp-action="ProfileChangePassword">
+                            <img class="img-fluid me-2" width="30" height="30"
+                                src="~/images/Download/arrow-clockwise.svg" alt="">
+                            Change Password
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center"
+                            onclick="onenLogoutModal()">
+                            <div class="d-flex">
+                                <img class="img-fluid me-2" width="30" height="30" 
+                                    src="~/images/Download/box-arrow-left.svg" alt="">
+                                Logout
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="modal fade" id="logout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered justify-content-center custom-modal-size">
+                <div class="modal-content ">
+                    <div class="modal-body text-center">
+                        <img class="alert_img " width="100px" height="100px"
+                            src="~/images/toppng.com-warning-icon-2400x2400.png" alt="">
+                        <div>Are you sure you want to logout?</div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <div class="mt-3">
+                            <a asp-controller="Login" asp-action="Logout" class="btn custom-btn-bg text-white">Yes</a>
+                            <button type="button" class="btn custom-blue-border bg-white custom-blue-color ms-1"
+                                data-bs-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <partial name="_Toaster.cshtml"></partial>
+        @RenderBody()
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            var currentUrl = window.location.pathname;
+            $(".sidebar_btn").each(function () {
+                if ($(this).data("id") === currentUrl) {
+                    $(this).addClass("selected-nav");
+                }
+            });
+        });
+
+        
+
+        @* $(".modal").on('hidden.bs.modal', function () {
+            $(this).find('form').trigger('reset');
+        }); *@
+
+        function PageReload() {
+            var currentUrl = window.location.href;
+            window.location.href = currentUrl;
+            @* location.reload(); *@
+        }
+
+        function onenLogoutModal() {
+            $('#logout').modal('show');
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

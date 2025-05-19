@@ -1,0 +1,179 @@
+@model PizzaShop.Entity.ViewModel.EditUserViewModel;
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="add_user_heading d-flex justify-content-between">
+    <div class="fw-bold fs-2">Edit User</div>
+    <div class="d-flex">
+        <a asp-controller="User" asp-action="UserList" class="btn custom-blue-borderBtn custom-blue-color d-flex align-items-center text-white ms-3">&lt; Back</a>
+    </div>
+</div>
+<form method="post" class="add_user_form" style="padding-bottom: 1px !important;">
+    <div class="row mx-0">
+        <div class="col-lg-6 col-md-6 mt-3">
+            <div class="form-floating">
+                <input type="text" class="form-control add_user_input" asp-for="Firstname" value="@Model.Firstname" id="floatingInput"
+                    placeholder="name@example.com">
+                <label for="floatingInput">First Name*</label>
+                <span asp-validation-for="Firstname" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 mt-3">
+            <div class="form-floating">
+                <input type="text" class="form-control add_user_input" asp-for="Lastname" value="@Model.Lastname" id="exampleInput"
+                    aria-describedby="emailHelp" placeholder="Last Name">
+                <label for="floatingInput">Last Name*</label>
+                <span asp-validation-for="Lastname" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mx-0">
+        <div class="col-lg-6 col-md-6 mt-3">
+            <div class="form-floating">
+                <input type="text" class="form-control add_user_input" asp-for="Username" value="@Model.Username" id="floatingInput"
+                    placeholder="name@example.com">
+                <label for="floatingInput">User Name*</label>
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 col-md-6 mt-3">
+            <div class="form-floating">
+                <select class="form-select add_user_input" style="height: 60px !important;" asp-for="Rolename" aria-label="Default select example">
+                    <option selected>@Model.Rolename</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Account Manager">Account Manager</option>
+                    <option value="Chef">Chef</option>
+                </select>
+                @* <input type="hidden" asp-for="RoleId" value="@Model.RoleId" /> *@
+                <label class="fs-6" for="floatingInput">Role*</label>
+                <span asp-validation-for="Rolename" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mx-0">
+        <div class="col-lg-6 col-md-6 mt-3">
+            <div class="form-floating">
+                <input type="text" class="form-control add_user_input" id="exampleInput" readonly
+                    aria-describedby="emailHelp" asp-for="Email" value="@Model.Email" placeholder="Email">
+                <label for="floatingInput">Email*</label>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 mt-3">
+            <div class="form-floating">
+                <select class="form-select add_user_input" style="height: 60px !important;" asp-for="Status"  aria-label="Default select example">
+                    @if (Model.Status == "Active")
+                    {
+                        <option value="Active" selected>Active</option>
+                        <option value="Inactive">Inactive</option>
+                    }
+                    else if (Model.Status == "Inactive")
+                    {
+                        <option value="Inactive" selected>Inactive</option>
+                        <option value="Active">Active</option>
+                    }
+                    @* <option selected>@Model.Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option> *@
+                </select>
+                <label class="fs-6" for="floatingInput">Status*</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row upload_div mx-0 mt-3">
+        <div class="col d-flex upload_div2 align-items-center browse_div justify-content-center w-100 border">
+            <div class="w-100">
+                <input type="hidden" name="ProfileImagePath" value="@Model.ProfileImagePath" />
+
+                <input id="inputFile" asp-for="ProfileImagePath" class="d-none" type="file">
+                <button type="button" class="w-100 h-100 d-flex flex-column align-items-center justify-content-center  upload_btn bg-white"
+                    onclick="openinputFile()">
+                    @if(Model.ProfileImagePath == null)
+                    {
+                        <img class="dashboard-icon img-fluid rounded" id="ProfileImagePreview" width="30"  height="50" src="~/images/Download/cloud-arrow-up.svg" alt="">
+                    }
+                    @if(Model.ProfileImagePath != null)
+                    {
+                        <img class="dashboard-icon img-fluid rounded" id="ProfileImagePreview" width="70" height="70" src="@Model.ProfileImagePath" alt="Image">
+                    }
+                    <span>Browse file</span>
+                    <span id="uploadValidationMsg" class="text-danger"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mx-0">
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+            <div class="form-floating ">
+                <input type="hidden" id="hiddenCountry" value="@Model.Country" />
+                <select class="form-select dropdown" style="height: 60px !important;" asp-for="Country" id="Country">
+                    <option value="">Select Country</option>
+                </select>
+                <label class="fs-6" for="floatingInput">Country*</label>
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+            <div class="form-floating ">
+                <input type="hidden" id="hiddenState" value="@Model.State" />
+                <select class="form-select" style="height: 60px !important;" asp-for="State" id="State">
+                    <option value="">Select State</option>
+                </select>
+                <label class="fs-6" for="floatingInput">State*</label>
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+            <div class="form-floating ">
+                <input type="hidden" id="hiddenCity" value="@Model.City" />
+                <select class="form-select" style="height: 60px !important;" asp-for="City" id="City"  aria-label="Default   select example">
+                    <option value="">Select City</option>
+                </select>
+                <label class="fs-6" for="floatingInput">City*</label>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="row mx-0">
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+            <div class="form-floating">
+                <input type="text" class="form-control add_user_input" id="floatingInput" asp-for="Zipcode" value="@Model.Zipcode"
+                    placeholder="name@example.com">
+                <label for="floatingInput">Zipcode*</label>
+                <span asp-validation-for="Zipcode" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+            <div class="form-floating">
+                <input type="text" class="form-control add_user_input" id="floatingInput" asp-for="Address" value="@Model.Address"
+                    placeholder="name@example.com">
+                <label for="floatingInput">Address*</label>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+            <div class="form-floating">
+                <input type="text" class="form-control add_user_input" id="floatingInput" asp-for="Phone" value="@Model.Phone"
+                    placeholder="name@example.com">
+                <label for="floatingInput">Phone*</label>
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="create_cancel_btn my-3">
+        <button type="submit" class="btn custom-bg-blue text-white">Update User</button>
+        <button onclick="PageReload()" type="button" class="btn custom-blue-borderBtn">Cancel</button>
+    </div>
+
+</form>
+
+<script src="~/js/EditUserView.js"></script>

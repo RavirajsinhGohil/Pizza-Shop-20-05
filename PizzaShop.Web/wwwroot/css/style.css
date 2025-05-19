@@ -1,0 +1,722 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+}
+
+button {
+    cursor: pointer;
+}
+
+.row>* {
+    flex-shrink: 0;
+    margin-top: var(--bs-gutter-y);
+}
+
+.login {
+    width: 100%;
+    height: 100%;
+}
+
+.login_body {
+    height: 100vh;
+    width: 50%;
+    background-color: #d8e8f8;
+    /* padding-left: 12px;
+    padding-right: 12px; */
+}
+
+.login_main {
+    padding-left: 10vw;
+    padding-right: 10vw;
+}
+
+.login_img {
+    height: 100vh;
+}
+
+.pizza_img {
+    height: 100vh;
+    /* width: 100%; */
+    object-fit: cover;
+}
+
+.login_heading {
+    color: white;
+}
+
+.pizza_shop_logo {
+    height: 6vh !important;
+}
+
+.forgotLink {
+    color: #0066A7;
+    border: 0px !important;
+    text-decoration: none !important;
+    background: transparent;
+    cursor: pointer;
+}
+
+.title {
+    color: #0066a7;
+}
+
+
+@media screen and (max-width: 992px) {
+
+    .login_img,
+    .login_body {
+        height: 50vh;
+    }
+
+    .pizza_img {
+        width: 100vw;
+    }
+
+    .login_body {
+        width: 100vw;
+        display: flex !important;
+        align-items: center !important;
+        /* flex-direction: column; */
+        justify-content: center !important;
+
+    }
+}
+
+/* 
+*************
+Forgot Page 
+*************
+ */
+
+.back_login {
+    text-decoration: none;
+}
+
+
+/* 
+***********
+Users List
+***********
+ */
+
+.sidebar_btn {
+    text-decoration: none;
+    color: gray;
+    height: 40px;
+    width: 100%;
+    padding: 10px;
+}
+
+.selected-nav {
+    background-color: #e9eaeb !important;
+    color: #0066a7 !important;
+}
+
+.selected-nav>img{
+    filter: brightness(0) saturate(100%) invert(20%) sepia(89%) saturate(2371%) hue-rotate(186deg) brightness(96%) contrast(102%);
+}
+
+.sidebar {
+    width: 250px !important;
+}
+
+.users_heading {
+    color: #0066A7;
+}
+
+.users_list {
+    height: 90vh;
+    background-color: #F2F2F2;
+}
+
+.users_list_body {
+    margin-left: 2%;
+    margin-right: 2%;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.search_user {
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 2px solid #F2F2F2;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.search_logo{
+    width: 50px !important;
+
+    border-top-width: 1px !important;
+    border-right-width: 1px !important;
+    border-bottom-width: 1px !important;
+    /* border-left-width: 1px; */
+    border-top-style: solid !important;
+    border-right-style: solid !important;
+    border-bottom-style: solid !important;
+    /* border-left-style: solid; */
+    border-top-color: rgb(206, 212, 218) !important;
+    border-right-color: rgb(206, 212, 218) !important;
+    border-bottom-color: rgb(206, 212, 218) !important;
+    border-image-source: initial !important;
+    border-image-slice: initial !important;
+    border-image-width: initial !important;
+    border-image-outset: initial !important;
+    border-image-repeat: initial !important;
+}
+
+
+.pencil_img {
+    padding-top: 6px !important;
+}
+
+.offcanvas-start {
+    width: 230px;
+}
+
+.status {
+    width: 100%;
+    height: 10vh;
+    background-color: #0066A7 !important;
+}
+
+.delete_btn {
+    border: none !important;
+}
+
+.user_list_font_color {
+    color: #70757a !important;
+}
+
+.paging {
+    border-radius: 5px;
+    background-color: white;
+}
+
+.paging_scroll {
+    width: 60px !important;
+    padding: 0 !important;
+    height: auto;
+    border: 1px solid black !important;
+    border-radius: 5px !important;
+}
+
+.page_btn {
+    border: 1px solid black;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 4px !important;
+}
+
+
+/* 
+***********
+Add User
+***********
+ */
+
+#user_body {
+    /* width: inherit; */
+    /* height: 100vh; */
+    /* margin-left: 250px; */
+    background-color: #F2F2F2;
+}
+
+.form-select {
+    height: 54px !important;
+}
+
+.add_user_input {
+    height: 60px !important;
+}
+
+.addUserDropdown {
+    height: 60px !important;
+}
+
+.add_user_heading {
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 1rem;
+    color: #0066A7;
+}
+
+.add_user_form {
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 1.5rem;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.upload_div {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+
+}
+
+.upload_div2 {
+    height: 100px;
+    border: 2px solid #ced4da !important;
+    border-style: dashed !important;
+}
+
+.upload_btn {
+    width: 100%;
+    height: 100%;
+
+    /* opacity: 0; */
+    position: relative;
+    /* color: white; */
+    border: none;
+    /* margin: 0px 12px;  */
+}
+
+.browse_div {
+    border-radius: 5px;
+}
+
+.create_cancel_btn {
+    margin-left: 12px;
+}
+
+.active_div {
+    color: white;
+    background-color: #99D363;
+    border-radius: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 75px !important;
+}
+
+.search_bar {
+    background-color: white;
+}
+
+
+.user_search_img{
+    width: 25px;
+    height: 25px;
+}
+
+.offcanvas {
+    width: 250px !important;
+}
+
+.offcanvas-backdrop.show {
+    background-color: transparent !important;
+}
+
+.offcanvas.show~#user_body {
+    margin-left: 250px;
+}
+
+.offcanvas.show~.status {
+    display: flex;
+    justify-content: end;
+}
+
+
+@media screen and (max-width: 768px) {
+    .toggle_btn {
+        opacity: 1;
+    }
+
+    .offcanvas.show~#user_body {
+        margin-left: 0px;
+    }
+
+    .offcanvas {
+        .offcanvas {
+            transform: none !important;
+            visibility: visible !important;
+            position: relative !important;
+        }
+    }
+
+    .offcanvas.show {
+        left: 0;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    #user_body {
+        height: 100vh;
+        margin-left: 250px !important;
+    }
+
+    .toggle_btn {
+        opacity: 0;
+    }
+
+    .offcanvas.show~#user_body {
+        margin-left: 250px;
+    }
+
+    .offcanvas.show {
+        left: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .offcanvas {
+        visibility: hidden !important;
+        transform: translateX(-100%) !important;
+    }
+
+    .offcanvas.show {
+        visibility: visible !important;
+        transform: translateX(0) !important;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .offcanvas {
+        visibility: visible !important;
+        transform: none !important;
+    }
+
+    #user_body {
+        height: 100vh;
+        margin-left: 250px !important;
+    }
+
+    .offcanvas.show {
+        left: 0 !important;
+    }
+}
+
+
+/* 
+*************
+Role
+*************
+*/
+.roles {
+    padding: 15px;
+    margin-left: 2%;
+    margin-right: 25%;
+    margin-top: 1.5rem;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+/* 
+*************
+Permission
+*************
+ */
+
+ .permissions {
+    padding: 15px;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 1.5rem;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.permission_cancel_btn {
+    margin-left: 100px;
+}
+
+.create_cancel_btn {
+    padding-right: 15px;
+}
+
+.custom-switch {
+    height: 20px !important;
+}
+
+
+/* 
+*************
+Menu
+*************
+ */
+
+.menu_heading {
+    margin-left: 10px;
+    margin-top: 10px;
+    color: #0066A7;
+}
+
+.tab-active {
+    color: #0066A7 !important;
+    border-bottom: 1px solid #0066A7 !important;
+
+}
+
+.tab-active>div:nth-child(1)>img{
+    filter: brightness(0) saturate(100%) invert(20%) sepia(89%) saturate(2371%) hue-rotate(186deg) brightness(96%) contrast(102%) !important;
+}
+
+.menu_item_delete {
+    padding: 10px;
+    border: 2px solid #F2F2F2 !important;
+}
+
+.six_dot {
+    height: 10px;
+}
+
+.add_category_btn {
+    width: 25px;
+    color: #0066A7 !important;
+}
+
+.menu_category,
+.menu_items_heading {
+    color: #0066A7;
+}
+
+.menu_sidebar_list {
+    height: 370px;
+    width: 250px;
+    overflow: auto;
+    /* border: 1px solid ; */
+    border-right: #0066A7;
+}
+
+.menu_content {
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 1.5rem;
+    padding-top: 5px;
+    padding-bottom: 15px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+/* 
+*************
+My Profile
+************* 
+*/
+
+.profile_bg {
+    width: 100%;
+    height: 50px;
+}
+
+.profile_body_img {
+    position: relative;
+    top: -23px;
+    height: 90px;
+    left: 18px;
+    border-radius: 50%;
+}
+
+.profile_dropdown {
+    background-color: transparent !important;
+    border: none !important;
+}
+.dropdown-menu {
+    z-index: 9959;
+}
+.ProfileChangeDiv {
+
+    padding-left: 100px !important;
+    /* margin-left: 5%;
+        margin-right: 5%;
+        margin-top: 1.5rem; */
+    background-color: #F2F2F2;
+    border-radius: 5px;
+}
+
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
+}
+
+/* ***************
+Item
+*************** */
+.modifierForItemSelect{
+    height: 40px !important;
+}
+
+/* ************
+Modifiers
+************ */
+.btn-edit-modifier
+{
+    border: none;
+    background: transparent;
+}
+
+/* ************
+Orders
+************ */
+.orderExportBtn {
+    width: 100px !important;
+    background-color: #0066A7;
+}
+
+.orderDateFilter {
+    margin-right:2%;
+    margin-top: 1rem;
+}
+
+.dateFilter {
+    height: 50px !important;
+}
+
+.orderSearchBtn {
+    width: 100px !important;
+    background-color: #0066A7;
+}
+
+.orderFilterCancelBtn {
+    border: 1px solid #0066A7;
+}
+
+/* .active {
+    background-color: #99D363 !important;
+} */
+
+
+/* 
+*********
+Table and Section
+*********
+  */
+
+.custom-blue-color {
+    color: #0066A7 !important;
+}
+.custom-bg-green {
+    background-color: #99d363;
+}
+
+.custom-blue-border {
+    border: 1px solid #0066a7 !important;
+}
+
+.custom-blue-borderBtn {
+    border: 1px solid #0066a7 !important;
+}
+
+.custom-bg-grey {
+    background-color: #e2e2e2;
+}
+
+.custom-bg-blue {
+    background-color: #0066a7 !important;
+}
+
+.custom-btn-bg {
+    background-color: #0066a7 !important;
+}
+
+.disabled-button {
+    pointer-events: none;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.disabled-toggle {
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.active-option {
+    background-color: #e2e2e2;
+    color: #1f74ad;
+}
+
+.category-active-option {
+    color: #0066a7;
+}
+
+.custom-blue-color>img{
+    filter: brightness(0) saturate(100%) invert(20%) sepia(89%) saturate(2371%) hue-rotate(186deg) brightness(96%) contrast(102%);
+}
+
+.custom-blue-color>div:nth-child(1)>img{
+    filter: brightness(0) saturate(100%) invert(20%) sepia(89%) saturate(2371%) hue-rotate(186deg) brightness(96%) contrast(102%);
+}
+.category-active-option>div:nth-child(1)>img{
+    filter: brightness(0) saturate(100%) invert(20%) sepia(89%) saturate(2371%) hue-rotate(186deg) brightness(96%) contrast(102%);
+}
+
+.pagination-section>div {
+    width: fit-content;
+    text-wrap: nowrap;
+}
+
+.searchicon-img {
+    width: 18px;
+    position: absolute;
+    top: 13px;
+    right: 5px;
+}
+
+.category-menu {
+    border-right: 3px solid #0066a7 !important;
+    background-color: #F2F2F2;
+}
+
+.tab-content>.active {
+    display: flex;
+}
+
+@media (max-width: 992px) {
+    .category-menu {
+        border-right: none !important;
+    }
+}
+
+/* 
+*****************
+Table menu
+*****************
+ */
+
+ .accordion-button::after {
+    flex-shrink: 0 !important;
+    width: 0   !important;
+    height: 0  !important;
+    margin-left: 0 !important;
+    content: "";
+    /* background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e); */
+    background-repeat: no-repeat ;
+    background-size: 1.25rem;
+    transition: transform .2s ease-in-out;
+}
+
+.accordion-button::before {
+    flex-shrink: 0 !important;
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    margin-left: 0 !important;
+    content: "" ;
+    background-image: url("/PizzaShop.Web/wwwroot/img/chevron-down.svg");
+    background-repeat: no-repeat !important;
+    background-size: 1.25rem !important;
+    transition: transform .2s ease-in-out !important;
+}
+
+.selected-table {
+    border: 2px solid #99D363 !important;
+}
+
+.custom-modal-size {
+    /* width: 500px !important;   
+    height: 400px !important;      */
+    /* max-width: 90vw;    
+    max-height: 90vh;    */
+}
+
+.custom-modal-size .modal-content {
+    height: 100%;
+}

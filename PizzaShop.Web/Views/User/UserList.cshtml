@@ -1,0 +1,69 @@
+@model PizzaShop.Entity.ViewModel.UserPaginationViewModel;
+
+@{
+
+    ViewData["Title"] = "Users List";
+    var canAddEdit = Convert.ToBoolean(ViewData["CanAddEdit"]);
+    var canView = Convert.ToBoolean(ViewData["CanView"]);
+    var canDelete = Convert.ToBoolean(ViewData["CanDelete"]);
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+<div class="users_list">
+    <div class=" add_user_heading py-3 mt-0 d-flex justify-content-between">
+        <div class="fw-bold fs-2 ">Users</div>
+        <div class="d-flex">
+            @* <form method="get" action="@Url.Action("UserList")" class="d-flex search_bar"> *@
+                <input type="text" id="searchTerm" name="searchTerm" onkeyup="searchUsers()" class="form-control d-flex search_bar" placeholder="Search"
+    using PizzaShop.Entity.ViewModel;
+    using PizzaShop.Entity.ViewModel;
+    using System.Security.Permissions;
+                    >
+            @* </form> *@
+            @if(canAddEdit){
+                <a  asp-controller="User" asp-action="AddUser" style="width: 150px !important;" class="btn custom-btn-bg text-white d-flex align-items-center ms-3">+Add User</a>
+            }
+        </div>
+    </div>
+
+    <div class="users_list_body p-4 " id="userListContainer" >
+        @await Html.PartialAsync("_UserList", Model)
+    </div>
+</div>
+
+<script>
+    let searchTimeout;
+
+    function searchUsers() {
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(function () {
+            let searchTerm = $('#searchTerm').val();
+            loadUsers(searchTerm, 1, $('#itemsPerPage').val(), '@Model.SortBy', '@Model.SortOrder' );
+        }, 500); 
+    }
+
+    function loadUsers(searchTerm, page, pageSize, sortBy, sortOrder ) {
+        $.ajax({
+            url: '@Url.Action("UserList")',
+            type: 'GET',
+            data: {
+                page: page,
+                pageSize: pageSize || $('#itemsPerPage').val(),
+                searchTerm: searchTerm || $('#searchTerm').val(), 
+                sortBy: sortBy || '@Model.SortBy',
+                sortOrder: sortOrder || '@Model.SortOrder'
+            },
+            headers: { "X-Requested-With": "XMLHttpRequest" }, 
+            success: function (data) {
+                $("#userListContainer").html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>
+
+@* <script src="~/js/UserListView.js"></script> *@

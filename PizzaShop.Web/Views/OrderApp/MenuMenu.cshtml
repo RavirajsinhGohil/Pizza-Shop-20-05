@@ -1,0 +1,368 @@
+@model PizzaShop.Entity.ViewModel.CategoryItemsForOrderMenuViewModel
+@{
+    ViewData["Title"] = "Menu";
+    Layout = "_OrderAppLayout";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<div class="container-fluid h-100">
+    <div class="row flex-wrap">
+        <!-- Sidebar -->
+        <div class="col-12 col-md-3 col-lg-2 bg-light sidebar border-end ps-md-0 p-3">
+            <h5 class="mb-3 ps-2">Categories</h5>
+            <ul class="nav flex-column gap-1">
+                <li>
+                    <a href="javascript:void(0);"
+                        class="nav-link category-link @(Model.SelectedCategoryId == null ? "active" : "")"
+                        data-category-id="0">All</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);"
+                        class="nav-link category-link @(Model.SelectedCategoryId == -1 ? "active" : "")" using
+                        iText.Forms.Xfdf; data-category-id="-1">Favorites</a>
+                </li>
+                @foreach (var category in Model.Categories)
+                {
+                    <li>
+                        <a href="javascript:void(0);"
+                            class="nav-link category-link @(Model.SelectedCategoryId == category.Menucategoryid ? "active" : "")"
+                            data-category-id="@category.Menucategoryid">
+                            @category.Categoryname
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <!-- Main content + Order Summary container -->
+        <div class="col-12 col-md-9 col-lg-10 p-4 d-flex gap-4 flex-wrap flex-lg-nowrap " id="MenuMainContainer">
+            <!-- Left: Item List -->
+            <div class="flex-grow-1" style="min-width: 300px;">
+                <div class="row mb-4 align-items-center">
+                    <div class="col-12 col-md-5 mb-3 mb-md-0">
+                        <div class="input-group input-group-lg">
+                            <input type="text" class="form-control " id="SearchItems" placeholder="Search"
+                                aria-label="Search items" aria-describedby="basic-addon2"
+                                style=" font-size: 17px; height: 44px;">
+                            @* <span class="input-group-text bg-white" id="basic-addon2" style=" height: 44px;"><i
+                                    class="bi bi-search"></i></span> *@
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-7 text-md-end text-start status-icons">
+                        <i class="bi bi-dot text-success fs-5 me-1"></i>Vegetarian
+                        <i class="bi bi-dot text-danger fs-5 mx-2"></i>Non-Vegetarian
+                        <i class="bi bi-dot text-warning fs-5 mx-2"></i>Vegan
+                    </div>
+                </div>
+
+                <div id="itemList">
+                    @Html.Partial("_ItemCardsPartial", Model.Items)
+                </div>
+            </div>
+            <!-- only show when we arrived with orderId -->
+            @if (Model.ActiveOrderId.HasValue)
+            {
+                <!-- Right: Order Summary -->
+                <input type="hidden" id="hiddenOrderId" name="ActiveOrderId" value="@Model.ActiveOrderId">
+                <div id="orderSummary" class="bg-white shadow-sm rounded-4 p-3" style="width: 150%; max-width: 500px; height: 650px !important;">
+                    <div class="fw-bold mb-3 d-flex justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center">
+                                <img src="~/images/icons/dinner-table.svg" height="50px" width="50px" alt="">
+                                <div id="orderSectionInfo" class="ms-2">@Model.SectionName
+                                    <div id="orderTableInfo">@string.Join(", ", Model.TableName)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <button class="btn m-1 top-buttons" onclick="OpenScannerModal()"><i
+                                    class="bi bi-qr-code-scan"></i></button>
+                            <button class="btn m-1 top-buttons" onclick="OpenEditCustomerModal(@Model.ActiveOrderId)"
+                                data-bs-toggle="tooltip" title="Edit customer">
+                                <i class="bi bi-person-vcard"></i>
+                            </button>
+                            <button class="btn m-1 top-buttons" onclick="openOrderInstructionModal(@Model.ActiveOrderId)"><i
+                                    class="bi bi-chat-left-text"></i></button>
+                        </div>
+                    </div>
+
+                    <div id="orderItemsContainer" class="w-100" style="flex-wrap: wrap;">
+                        <!-- Order items will be dynamically injected here -->
+                    </div>
+
+                    <div class="mt-auto pt-3 border-top">
+                        <div class="d-flex justify-content-between fw-bold">SubTotal <span id="subtotal">₹0.00</span></div>
+                        @foreach (var tax in Model.Taxes)
+                        {
+                            if (tax.Isdefault == true)
+                            {
+                                if(tax.Taxtype == "Percentage")
+                                {
+                                    <div class="d-flex justify-content-between defaultTax  text-muted" data-tax-id="@tax.Taxid">
+                                        @tax.Taxname 
+                                        <span class="default-tax-amount taxPercentage">@tax.Taxvalue%</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-between defaultTax  text-muted" data-tax-id="@tax.Taxid">
+                                        @tax.Taxname 
+                                        <span class="default-tax-amount taxFixed">₹@tax.Taxvalue</span>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="d-flex justify-content-between align-items-center text-muted">
+                                    <div class="form-check">
+                                        <input class="form-check-input tax-checkbox" type="checkbox" value="@tax.Taxvalue" onchange="updateTotals()">
+                                        a<label class="form-check-label">
+                                            @tax.Taxname
+                                        </label>
+                                    </div>
+                                    <span>₹@tax.Taxvalue</span>
+                                </div>
+                            }
+                        }
+                        <div class="d-flex justify-content-between fw-bold">Total <span id="total">₹0.00</span></div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="row">
+                            <div class="col-12 col-md-4 mb-2">
+                                <button class="btn w-100"
+                                    style="color: white; background: #0066a7; border-radius: 3px;" onclick="saveOrder()">Save</button>
+                            </div>
+                            <div class="col-12 col-md-4 mb-2">
+                                <button class="btn top-buttons w-100" style="border-radius: 3px;" data-bs-toggle="modal" data-bs-target="#completeOrderModal">Complete</button>
+                            </div>
+                            <div class="col-12 col-md-4 mb-2">
+                                <button class="btn top-buttons"
+                                    style=" border-radius: 3px; width: 107% !important;">Generate Invoice</button>
+                            </div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-end">
+                            <button type="button" class="btn top-buttons w-25" style="border-radius: 3px;" onclick="CancelOrder()" >Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal For Modifier -->
+<div class="modal fade" id="ItemsDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Item Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <!-- Dynamic content goes here -->
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" id="addToOrderBtn" class="btn btn-primary">Add To Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ───── Edit-Customer Modal ───────────────────────────────────── -->
+<div class="modal fade" id="editCustomerInMenuModal" tabindex="-1" aria-labelledby="editCustomerLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+
+            <div class="modal-header px-0">
+                <h5 class="modal-title" style="color : #726e6e;" id="editCustomerLabel">Customer Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="post" id="editCustomerForm" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body px-0">
+
+                    <!-- hidden keys -->
+                    <input type="hidden" name="OrderId" id="editOrderId" />
+                    <input type="hidden" name="CustomerId" id="editCustomerId" />
+
+                    <!-- name -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="Name" id="editName" class="form-control" placeholder="Name" required
+                            minlength="2" maxlength="60">
+                        <label for="editName">Name*</label>
+                        <div class="invalid-feedback">Name is Required.</div>
+                    </div>
+
+                    <div class="row">
+                        <!-- phone -->
+                        <div class="col-12 col-lg-6 ">
+                            <div class="form-floating mb-3">
+                                <input type="tel" name="Phone" id="editPhone" class="form-control" placeholder="Phone"
+                                    pattern="^\d{10}$" required>
+                                <label for="editPhone">Mobile Number*</label>
+                                <div class="invalid-feedback">Mobile Number is Required.</div>
+                            </div>
+                        </div>
+
+                        <!-- persons -->
+                        <div class="col-12 col-lg-6 ">
+                            <div class="form-floating mb-3">
+                                <input type="number" name="NoOfPersons" id="editPersons" class="form-control"
+                                    placeholder="Persons" min="1" max="99" required>
+                                <label for="editPersons">No. of Persons(s)*</label>
+                                <div class="invalid-feedback">No. of Persons(s) is Required.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- email -->
+                    <div class="form-floating mb-3">
+                        <input type="email" name="Email" id="editEmail" class="form-control"
+                            placeholder="email@example.com">
+                        <label for="editEmail">Email</label>
+                        @* <div class="invalid-feedback">Valid e-mail required.</div> *@
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn custom-btn-bg text-white">Save</button>
+                    <button type="button" class="btn custom-blue-border custom-blue-color ms-2" data-bs-dismiss="modal">Cancel</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!---- Modal For Menu Sacnner --->
+<div class="modal fade" id="ModalForMenuScanner" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Menu</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <div style="width: fit-content;">
+                    <img height="250px" src="~/images/qr-code.png" alt="">
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn top-buttons" data-bs-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal For Menu Order Instruction -->
+<div class="modal fade" id="ModalForOrderInstruction" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="orderInstructionForm">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Order Wise Comment</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating">
+                        <textarea class="form-control" style="height: 95px;" placeholder="Leave a comment here" id="adminComment"
+                            name="AdminComment"></textarea>
+                        <label for="adminComment">Comment*</label>
+                    </div>
+                    <input type="hidden" id="orderDetailId" name="OrderDetailId" />
+                </div>
+                <div class="modal-footer border-none">
+                    <button type="submit" class="btn custom-btn-bg text-white">Save</button>
+                    <button type="button" class="btn top-buttons custom-blue-border " data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--- Modal For item Wise Instruction --->
+<div class="modal fade" id="ModalForItemInstruction" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="ItemInstructionForm">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Special Instruction</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a comment here" id="Instruction"
+                            name="Instruction"></textarea>
+                        <label for="Instruction">Instruction*</label>
+                        <span class="text-danger small" id="instructionError" style="display:none;"></span>
+                    </div>
+                    <input type="hidden" id="ItemDetailId" name="itemDetailId" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn custom-btn-bg text-white">Save</button>
+                    <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Complete Order -->
+<div class="modal fade" id="completeOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Complete Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-center">
+            <img class="alert_img" width="70px" height="70px" src="~/images/toppng.com-warning-icon-2400x2400.png" alt="">
+        </div>
+        <div class="d-flex justify-content-center">Are you sure you want to complete order?</div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button type="button" onclick="completeOrder()" class="btn custom-btn-bg text-white">Yes</button>
+        <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Customer Review -->
+<div class="modal fade" id="customerReviewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Customer Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Dynamically load Feedback attributes  -->
+        
+      <div class="modal-footer d-flex justify-content-center">
+        <button type="button" class="btn custom-btn-bg text-white">Save</button>
+        <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="~/js/MenuOrderApp.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    
+});
+
+</script>

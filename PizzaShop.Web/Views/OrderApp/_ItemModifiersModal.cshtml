@@ -1,0 +1,43 @@
+@model PizzaShop.Entity.ViewModel.ModifierSelectionModalViewModel
+<div class="modal-header">
+    <h5 class="modal-title">@Model.ItemName</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+@* hidden inputs *@
+<input type="hidden" id="ItemName" value="@Model.ItemName">
+<input type="hidden" id="itemQuantity" value="@Model.Quantity">
+<input type="hidden" id="ItemRate" value="@Model.Rate">
+<input type="hidden" id="ItemTax" value="@Model.TaxPercentage">
+<input type="hidden" id="ItemId" value="@Model.ItemId">
+<div class="modal-body">
+    @if(Model.ModifierGroups == null || Model.ModifierGroups.Count == 0)
+    {
+        <div class="text-center">
+            <h5 class="text-muted">No modifiers available for this item.</h5>
+        </div>
+    }
+    @foreach (var group in Model.ModifierGroups)
+    {
+        <div class="modifier-group mb-4" data-min="@group.Min" data-max="@group.Max">
+            <h6 class="fw-bold">@group.GroupName <small class="text-muted">(You can choose Minimum - @group.Min &
+                    Maximum - @group.Max options)</small></h6>
+            <div class="row g-3 mb-3">
+                @foreach (var mod in group.Modifiers)
+                {
+                    <div class="col-4">
+                        <div class="card option-card h-100 @(mod.IsSelected ? "selected" : "")" data-id="@mod.Id">
+                            <div class="card-body p-2">
+                                <div class="fw-semibold">@mod.Name</div>
+                                <div class="text-muted small">₹@mod.Price</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" id="addToOrderBtn" class="btn custom-btn-bg text-white">Add</button>
+    <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Close</button>
+</div>

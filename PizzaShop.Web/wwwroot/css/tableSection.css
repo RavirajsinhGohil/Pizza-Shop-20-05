@@ -1,0 +1,70 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .custom-bg-green {
+    background-color: #99d363;
+  }
+  
+  .custom-blue-border {
+    border: 2px solid #0066a7;
+  }
+  
+  .custom-bg-grey {
+    background-color: #e2e2e2;
+  }
+  
+  .custom-bg-blue {
+    background-color: #ddf1ff;
+  }
+
+  /* .active-option {
+    background-color: #e2e2e2;
+    color: #1f74ad;
+  } */
+
+  /* .category-active-option {
+    color: #0066a7;
+  } */
+  
+  /* .category-active-option>div:nth-child(1)>img{
+    filter: brightness(0) saturate(100%) invert(20%) sepia(89%) saturate(2371%) hue-rotate(186deg) brightness(96%) contrast(102%);
+  } */
+  
+  .pagination-section>div {
+    width: fit-content;
+    text-wrap: nowrap;
+  }
+  
+  .searchicon-img {
+    width: 18px;
+    position: absolute;
+    top: 13px;
+    right: 5px;
+  }
+
+  /* .category-menu {
+    border-right: 2px solid #0066a7 !important;
+    background-color: #F2F2F2;
+  } */
+  
+  .tab-content>.active {
+    display: flex;
+  }
+
+  @media (max-width: 992px) {
+    .category-menu {
+      border-right: none !important;
+    }
+  }
+  
+  .disabled-button {
+    pointer-events: none;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  .disabled-toggle {
+    pointer-events: none;
+    cursor: not-allowed;
+  }

@@ -1,0 +1,322 @@
+@using PizzaShop.Entity.ViewModel
+@model PizzaShop.Entity.ViewModel.OrderAppTableModuleViewModel
+
+@{
+    PizzaShop.Entity.ViewModel.AssignTableViewModel? assignModel = new PizzaShop.Entity.ViewModel.AssignTableViewModel
+    {
+        AvailableSections = Model.Sections.Select(m => m.SectionName).Distinct().ToList()
+        @* OrderId = Model.Sections., *@
+    };
+    Layout = "_OrderAppLayout";
+    ViewData["Title"] = "Tables";
+}
+
+<div id="assignModal" data-sections='@Html.Raw(Json.Serialize(assignModel.AvailableSections))'></div>
+
+<div class="container-fluid d-flex justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold custom-blue-color">Table View</h2>
+    <ul class="list-inline d-flex flex-wrap justify-content-center justify-content-md-end mb-0">
+        <li class="list-inline-item me-3">
+            <span class="d-inline-block rounded-circle me-1  "
+                style="width: 10px; height: 10px; background-color: #D2CEC6;"></span>
+            Available
+        </li>
+        <li class="list-inline-item me-3">
+            <span class="d-inline-block rounded-circle me-1 "
+                style="width: 10px; height: 10px; border: 2px solid #a4d576;"></span>
+            Selected
+        </li>
+        <li class="list-inline-item me-3">
+            <span class="d-inline-block rounded-circle me-1 "
+                style="width: 10px; height: 10px; background-color: #7FC83C;"></span>
+            Assigned
+        </li>
+        <li class="list-inline-item">
+            <span class="d-inline-block rounded-circle me-1 "
+                style="width: 10px; height: 10px; background-color: #77B4E0;"></span>
+            Running
+        </li>
+    </ul>
+</div>
+
+<div id="accordion">
+    @foreach (var section123 in Model.Sections)
+    {
+        <div class="accordion  mb-3">
+            <div class="accordion-item">
+                <div class="accordion-header d-flex justify-content-between" id="headingGround">
+                    <button class="accordion-button bg-white custom-blue-color" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#Floor_@section123.SectionId">
+                        <div>@section123.SectionName</div>
+                    </button>
+
+                    <div class="d-flex align-items-center m-1">
+                        <ul class="list-inline d-flex justify-content-center mb-0">
+                            <li class="list-inline-item d-flex justify-content-center align-items-center me-3">
+                                <span class="d-inline-block rounded-circle me-1 "
+                                    style="width: 10px; height: 10px; background-color: #D2CEC6;"></span>
+                                @section123.Available
+                            </li>
+                            <li class="list-inline-item d-flex justify-content-center align-items-center me-3">
+                                <span class="d-inline-block rounded-circle me-1 "
+                                    style="width: 10px; height: 10px; background-color: #7FC83C;"></span>
+                                @section123.Assigned
+                            </li>
+                            <li class="list-inline-item d-flex justify-content-center align-items-center me-3   ">
+                                <span class="d-inline-block rounded-circle me-1 "
+                                    style="width: 10px; height: 10px; background-color: #77B4E0;"></span>
+                                @section123.Running
+                            </li>
+                        </ul>
+
+                        <a class="btn custom-blue-border custom-blue-color" style="height: fit-content; text-wrap: nowrap;"
+                            data-bs-toggle="modal" data-bs-target="#waitingTokenModal" type="button"
+                            data-section="@section123.SectionName" data-section-id="@section123.SectionId">
+                            + Waiting Token
+                        </a>
+                    </div>
+                </div>
+
+                <div id="Floor_@section123.SectionId" class="accordion-collapse collapse ">
+                    <div class="accordion-body">
+                        <div class="d-flex row gap-3 flex-wrap ">
+                            @foreach (TableCard? table in section123.Tables)
+                            {
+                                string? tableStatus = table.TableStatus;
+                                string? tableStatusClass = tableStatus switch
+                                {
+                                    "Available" => "custom-gray-bg ",
+                                    "Assigned" => "custom-lightGreen-bg ",
+                                    "Running" => "custom-skyBlue-bg ",
+                                    _ => ""
+                                };
+                                string? tableStatusText = tableStatus switch
+                                {
+                                    "Available" => "custom-text-darkGray",
+                                    "Assigned" => "custom-text-darkGreen",
+                                    "Running" => "custom-text-darkBlue",
+                                    _ => ""
+                                };
+                                var Link = "#";
+                                if (tableStatus == "Assigned" || tableStatus == "Running")
+                                {
+                                    Link = Url.Action("MenuMenu", "OrderApp", new
+                                    {
+                                        searchText = "",
+                                        categoryId = 0,
+                                        orderId = @table.OrderId
+                                    });
+                                }
+                                string? clickableClass = tableStatus == "Available" ? "available-clickable" : "";
+
+                                <input type="hidden"class="selectedTables" id="SelectedTableId_@section123.SectionId" name="SelectedTableId" />                               
+
+                                <a href="@Link" style="text-decoration: none; height: 125px; width: 225px;"
+                                    class="card col-1 p-0 table-card text-white border @tableStatusClass  @clickableClass"
+                                    data-table-id="@table.TableId" data-sectionId="@section123.SectionId" data-section="@section123.SectionName">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col pe-0">
+                                                <h6 class="card-title fw-bold @tableStatusText">@table.TableName</h6>
+                                                <img src="~/images/icons/people.svg"
+                                                    style="filter: brightness(0) saturate(50%) invert(20%) sepia(89%) hue-rotate(186deg) brightness(96%) contrast(102%);"
+                                                    alt="Image" width="15px" height="15px">
+                                                <div class="card-text d-flex fs-6 text-dark">
+                                                    @table.Capacity
+                                                </div>
+                                            </div>
+                                            <div class="col ps-0">
+                                                @if(table.AssignedTime != null)
+                                                {
+                                                    TimeSpan timeRemaining = DateTime.Now - table.AssignedTime.Value;
+                                                    string timeRemainingFormatted = "";
+
+                                                    if (timeRemaining.TotalSeconds > 0)
+                                                    {
+                                                        List<string> parts = new List<string>();
+
+                                                        if (timeRemaining.Days > 0)
+                                                            parts.Add($"{timeRemaining.Days} day{(timeRemaining.Days > 1 ? "s" : "")}");
+                                                        if (timeRemaining.Hours > 0)
+                                                            parts.Add($"{timeRemaining.Hours} hour{(timeRemaining.Hours > 1 ? "s" : "")}");
+                                                        if (timeRemaining.Minutes > 0)
+                                                            parts.Add($"{timeRemaining.Minutes} minute{(timeRemaining.Minutes > 1 ? "s" : "")}");
+                                                        if (timeRemaining.Seconds > 0 || parts.Count == 0)
+                                                            parts.Add($"{timeRemaining.Seconds} second{(timeRemaining.Seconds > 1 ? "s" : "")}");
+
+                                                        timeRemainingFormatted = string.Join(" ", parts);
+                                                    }
+
+                                                    <div class="time-display d-flex align-items-center gap-1 flex-column mt-2">
+                                                        <img src="~/images/Download/stopwatch.svg" >
+                                                        <span class="time-text fw-semibold small text-center text-dark" style="width: 110px;">@timeRemainingFormatted</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                        <button class="btn custom-btn-bg text-white assignBtnForSection ms-auto d-flex justify-content-end"
+                            data-bs-toggle="offcanvas" data-section-id="@section123.SectionId"
+                            data-bs-target="#assignOffcanvas" style="height: fit-content;" type="button"
+                            disabled>Assign</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Waiting Token Modal -->
+<div class="modal fade" id="waitingTokenModal" tabindex="-1" aria-labelledby="waitingTokenModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header">
+                <h5 class="modal-title" id="waitingTokenModalLabel">Waiting Token Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="waitingTokenForm" asp-controller="OrderApp" asp-action="AddWaitingToken" method="post">
+                <input type="hidden" name="SectionId" id="SectionId" />
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="email" asp-for="WaitingToken.Email" class="form-control" id="floatingEmail" placeholder="Email" />
+                        <label for="floatingEmail">Email*</label>
+                        <span class="text-danger waitingTokenValidation" asp-validation-for="WaitingToken.Email"></span>
+                        @* <div class="invalid-feedback">Email is required</div> *@
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="WaitingToken.Name" class="form-control" id="floatingName" placeholder="Name" />
+                        <label for="floatingName">Name*</label>
+                        <span class="text-danger waitingTokenValidation" asp-validation-for="WaitingToken.Name"></span>
+                        <div class="invalid-feedback">Name is required</div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text"asp-for="WaitingToken.Phone" class="form-control" id="floatingPhone"
+                            placeholder="Mobile Number" pattern="^[0-9]{10}$" />
+                        <label for="floatingPhone">Mobile Number*</label>
+                        <span class="text-danger waitingTokenValidation" asp-validation-for="WaitingToken.Phone"></span>
+                        <div class="invalid-feedback">Mobile Number is required</div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col form-floating mb-3">
+                            <div class="form-floating mb-3">
+                                <input type="number" asp-for="WaitingToken.TotalPersons" class="form-control" id="floatingPersons"
+                                    placeholder="No. of Persons" />
+                                <label for="floatingPersons">No. of Person(s)*</label>
+                                <span class="text-danger waitingTokenValidation" asp-validation-for="WaitingToken.TotalPersons"></span>
+                                <div class="invalid-feedback">No. of Person(s) is required</div>
+                            </div>
+                        </div>
+                        <div class="col form-floating mb-3">
+                            <select asp-for="WaitingToken.SectionId123" class="form-select pe-none" style="height: 58px !important;" id="floatingSection">
+                                <option value="" disabled selected>Select Section</option>
+                                @foreach (var s in Model.Sections)
+                                {
+                                    <option value="@s.SectionId">@s.SectionName</option>
+                                }
+                            </select>
+                            <label for="floatingSection">Section*</label>
+                            <span class="text-danger waitingTokenValidation" asp-validation-for="WaitingToken.SectionId123"></span>
+                            <div class="invalid-feedback">Please select Section.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn custom-btn-bg text-white">Save</button>
+                    <button type="button" class="btn custom-blue-color custom-blue-border" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* offcanvas for waiting token *@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="assignOffcanvas" aria-labelledby="assignOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title custom-blue-color" id="assignOffcanvasLabel">Waiting List</h5>
+        @* <input type="hidden" id="SelectedTableId" name="SelectedTableId" /> *@
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="waitinglistCustomerDeatil">
+            <!-- Customer list will be dynamically populated here -->
+        </div>
+        <h5 class="custom-blue-color">Customer Detail</h5>
+        @* Offcanvas Form: Assign Table *@
+        <form asp-controller="OrderApp" asp-action="AssignCustomerToTableAsync" method="post"
+            class="d-flex flex-column gap-3" id="assignTableForm">
+            <input type="hidden" id="SelectedTableId" name="SelectedTableId" />
+            <input type="hidden" id="SectionName" name="SectionName" />
+            <input type="hidden" id="WaitingTokenId" name="Id" />
+            <input type="hidden" id="SectionId" name="SectionId" />
+            <input type="hidden" id="CustomerId" name="CustomerId" />
+            <input type="hidden" id="OrderId" name="OrderId" />
+
+            <!-- Email -->
+            <div class="form-floating">
+                <input name="Email" type="email" class="form-control" id="Email" placeholder="Email" />
+                <label for="Email">Email*</label>
+                <span id="emailValidation" class="text-danger small"></span>
+            </div>
+
+            <!-- Name -->
+            <div class="form-floating">
+                <input name="Name" class="form-control" id="Name" placeholder="Name" />
+                <label for="Name">Name*</label>
+                <span id="nameValidation" class="text-danger small"></span>
+            </div>
+
+            <!-- Mobile -->
+            <div class="form-floating">
+                <input name="Mobile" class="form-control" id="Mobile" placeholder="Mobile" maxlength="10" />
+                <label for="Mobile">Mobile Number*</label>
+                <span id="mobileValidation" class="text-danger small"></span>
+            </div>
+
+            <div class="row">
+                <!-- Number of Persons -->
+                <div class="col-6">
+                    <div class="form-floating">
+                        <input name="NoOfPersons" class="form-control" id="NoOfPersons" placeholder="No. Of Persons" />
+                        <label for="NoOfPersons">No. Of Persons*</label>
+                        <span id="noOfPersonsValidation" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Section -->    
+                <div class="col-6">
+                    <div class="form-floating">
+                        <select name="SectionName" class="form-select pe-none" style="height: 60px !important;"
+                            id="SectionDropdown">
+                            <option selected disabled value="">Select Section</option>
+                            @foreach (var sections in assignModel.AvailableSections)
+                            {
+                                <option value="@sections">@sections</option>
+                            }
+                        </select>
+                        <label for="SectionDropdown">Section*</label>
+                        <span id="sectionValidation" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit and Cancel Buttons -->
+            <div class="d-flex justify-content-end gap-2 mt-2">
+                <button type="submit" class="btn text-white" style="background-color: #0066a7;">Assign</button>
+                <button type="button" class="btn" data-bs-dismiss="offcanvas"
+                    style="border: 1px solid #0066a7; color: #0066a7;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/TableMenu.js"></script>

@@ -1,0 +1,102 @@
+@* @ @model DAL.ViewModels.MenuViewModel; @ *@
+@model PizzaShop.Entity.ViewModel.TableListPaginationViewModel
+
+@{
+    var canAddEdit = Convert.ToBoolean(ViewData["CanAddEdit"]);
+    var canView = Convert.ToBoolean(ViewData["CanView"]);
+    var canDelete = Convert.ToBoolean(ViewData["CanDelete"]);
+}
+
+<table class="table">
+    <tr>
+        <th class="d-flex ">
+            <div class="form-check">
+                <input class="form-check-input outer_checkbox" id="main_table_checkbox" type="checkbox" value="">
+            </div> <span>Name</span>
+        </th>
+        <th>Capacity</th>
+        <th>Status</th>
+        @if(canAddEdit || canDelete)
+        {
+            <th>Action</th>
+        }
+    </tr>
+
+    @if (Model.Items == null || !Model.Items.Any())
+    {
+        <tr>
+            <td colspan="4" class="text-center">No tables found</td>
+        </tr>
+    }
+    else
+    {
+        @foreach (var i in Model.Items)
+        {
+            <tr>
+                <td>
+                    <div class="d-flex justify-content-start gap-2 align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input tablelist_inner_checkbox" type="checkbox" value="@i.TableId">
+                        </div>
+                        <span>@i.Name</span>
+                    </div>
+                </td>
+                <td>@i.Capacity</td>
+                <td>
+                    <div class="btn-secondary px-3 rounded-pill d-flex justify-content-center @(i.Status ? "bg-success" : "bg-secondary")"
+                        style="width: fit-content; ">
+                        @(i.Status ? "Available" : "Occupied")
+                    </div>
+                </td>
+                @if(canAddEdit || canDelete)
+                {
+                    <td>
+                        <div class="d-flex justify-content-start">
+                            @if(canAddEdit)
+                            {
+                                <img class="btn" src="~/images/Download/pencil.svg" title="Edit" alt="" data-bs-toggle="modal"
+                                    data-bs-target="#EditTablemodal" item-obj='@Html.Raw(Json.Serialize(i))'
+                                    onclick="setEditTabledata(this)">
+                            }
+                            @if(canDelete)
+                            {
+                                <img class=" btn" src="~/images/Download/trash.svg" title="Delete" data-bs-toggle="modal"
+                                    data-bs-target="#deletetablemodal" alt="" onclick="setDeleteTableData(this)" table-id="@i.TableId">
+                            }
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    }
+
+</table>
+<div class="pagination-section d-flex justify-content-end align-items-center gap-2 overflow-auto w-100">
+    <div class="d-flex justify-content-md-end align-items-center gap-2 w-100">
+        <div>Items per page: </div>
+
+        <div class="mt-3 d-flex me-3 " style="height: 37px; width: 50px; margin: 0px !important;">
+            <select style="border-radius: 5px;" id="" onchange="TableListPaginationAjax(this.value, 1, @Model.Sectionid)"
+             aria-label="Default select example">
+                @foreach (var size in new[] {5, 10, 15, 20 })
+                {
+                    <option value="@size" selected="@(Model.Page.PageSize == size ? true : false)">@size</option>
+                }
+            </select>
+        </div>
+
+        <div>Showing @Model.Page.FromRec - @Model.Page.ToRec of @Model.Page.TotalRecord</div>
+
+        <div onclick="TableListPaginationAjax(@Model.Page.PageSize,@Model.Page.CurrentPage-1, @Model.Sectionid)"
+            class="text-black @( Model.Page.CurrentPage > 1? " " : "disabled-button")" style="text-decoration: none;">
+            <div class="border p-2 px-3"> &lt; </div>
+        </div>
+
+        <div onclick="TableListPaginationAjax(@Model.Page.PageSize, @Model.Page.CurrentPage+1,@Model.Sectionid)"
+            class="text-black  @(Model.Page.CurrentPage < Model.Page.TotalPages ? " " : "disabled-button")"
+            style="text-decoration: none;">
+            <div class="border p-2 px-3">&gt;</div>
+        </div>
+
+    </div>
+</div>

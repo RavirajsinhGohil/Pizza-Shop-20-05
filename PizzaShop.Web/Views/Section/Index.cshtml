@@ -1,0 +1,375 @@
+@model PizzaShop.Entity.ViewModel.SectionAndTableViewModel
+
+@{
+    ViewData["Title"] = "Table And Section";
+    var canAddEdit = Convert.ToBoolean(ViewData["CanAddEdit"]);
+    var canView = Convert.ToBoolean(ViewData["CanView"]);
+    var canDelete = Convert.ToBoolean(ViewData["CanDelete"]);
+}
+
+<div class="add_user_heading d-flex justify-content-between">
+    <div class="fw-bold fs-2">Sections</div>
+    <div class="d-flex">
+        @* <a asp-controller="User" asp-action="UserList" class="btn btn-primary ms-3">&lt; Back</a> *@
+    </div>
+</div>
+<div class=" add_user_form" style="box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;">
+    <div class="bg-white mt-2 bg-white position-relative">
+
+        @* first tab *@
+        <div class=" ms-0 w-100 h-100">
+            <div class="row d-flex w-100 h-100" style="height: 60vh !important;">
+                <div class="col-lg-3 category-menu border-0 pt-3 " id="category-menu">
+                    <div class="d-flex justify-content-between align-items-center p-1">
+                        <h5 class="custom-blue-color fw-bold">Section</h5>
+                        @if(canAddEdit)
+                        {
+                            <div class="btn custom-blue-border fw-bold  custom-blue-color custom-blue rounded" 
+                                data-bs-toggle="modal" data-bs-target="#Addsectionmodal">+
+                            </div>
+                        }
+                    </div>
+                    <div class="d-flex flex-column p-2 mt-3 gap-4 fw-medium overflow-auto h-75" id="section-list">
+                        @* partial view here of section list *@
+
+                    </div>
+
+                </div>
+                <div class="col-lg-9 pt-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="custom-blue-color fs-5 fw-bold">Tables</div>
+                        <div class="search-delete-section d-flex justify-content-end align-items-center" >
+                            <div class="search-section d-flex gap-2 ">
+                                <div class="position-relative" style="width: 180px;">
+                                    <input type="text" class="form-control p-2 w-100 h-100" placeholder="Search" 
+                                        id="tableitem-search-field">
+                                    @* <img src="~/images/icons/search.svg" alt="" class="searchicon-img"> *@
+                                </div>
+                                @if(canDelete)
+                                {
+                                    <div class="d-flex justify-content-center align-items-center w-auto border rounded px-3 "
+                                        style="cursor: pointer;" id="DeleteTables">
+                                        <img src="~/images/Download/trash.svg" alt="" srcset="" style="width: 20px;">
+                                    </div>
+                                }
+                                @if(canAddEdit)
+                                {
+                                    <button type="button" class=" custom-btn-bg text-white p-2 border d-none d-md-block"
+                                        style="border-radius: 5px;" data-bs-toggle="modal"
+                                        data-bs-target="#AddTablemodal"><span class="fs-5 fw-bold">+</span> New
+                                        Table</button>
+                                    <button type="button"
+                                        class=" custom-btn-bg text-white px-3 border fs-5 fw-bold d-md-none">+</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-section bg-white table-responsive mt-3 ms-2 me-2"  id="diningtablelistcontainer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*============= Modals ========== *@
+
+<!-- add Section modal -->
+<div class="modal fade" id="Addsectionmodal" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content w-100">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Section</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="AddSection" asp-controller="Section" method="post">
+                <div class="modal-body">
+
+                    <div class="d-flex flex-column">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="sectionName" asp-for="Section.SectionName"
+                                placeholder="Name" />
+                            <label for="sectionName">Name*</label>
+                            <span class="text-danger" asp-validation-for="Section.SectionName"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="sectionDescription" name="categoryDescription"
+                                asp-for="Section.Description" placeholder="Description" style="height: 90px;">
+                                </textarea>
+                            <label for="sectionDescription">Description</label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn custom-btn-bg text-white ">Save</button>
+                        <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- edit Section modal -->
+<div class="modal fade" id="Editsectionmodal" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content w-100">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Section</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="EditSection" asp-controller="Section" method="post">
+                <div class="modal-body">
+                    <div class="d-flex flex-column">
+                        <input type="text" id="Sectionid" asp-for="Section.Sectionid" hidden>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="SectionName" asp-for="Section.SectionName"
+                                placeholder="Name">
+                            <label for="sectionName">Name*</label>
+                            <span class="text-danger" asp-validation-for="Section.SectionName"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+
+                            <textarea class="form-control" id="Description" rows="3" placeholder="Description"
+                                asp-for="Section.Description" style="height: 90px;"></textarea>
+                            <label for="Description">Description</label>
+                            <span class="text-danger" asp-validation-for="Section.Description"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn custom-btn-bg text-white fw-medium">Save</button>
+                        <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* Delete Section Modal *@
+
+<div class="modal fade" tabindex="-1" id="deletesectionmodal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3" style="width: 420px !important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-center">
+                    <img class="alert_img" width="100px" height="100px"
+                        src="~/images/toppng.com-warning-icon-2400x2400.png" alt="">
+                </div>
+                <div class="d-flex justify-content-center">Are you sure you want to delete this Section?</div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <a id="deleteSectionBtn">
+                    <button type="button" class="btn custom-btn-bg text-white px-4">Yes</button>
+                </a>
+                <button type="button" class="btn custom-blue-color custom-blue-border px-3" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Table modal -->
+<div class="modal fade" id="EditTablemodal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content w-100">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Table</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-action="EditTable" asp-controller="Section" method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" id="TableidForEdit" asp-for="Table.TableId" hidden>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="NameofTableforedit" placeholder="Name" asp-for="Table.Name">
+                                <label for="NameofTable">Name*</label>
+                                <span class="text-danger" asp-validation-for="Table.Name"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="sectionidforedit" style="height: 60px !important;" asp-for="Table.SectionId">
+                                    <option value="">Select Section</option>
+                                    @foreach (var c in Model.Sections)
+                                    {
+                                        if (c.SectionId == Model.SelectedSection)
+                                        {
+                                            <option value="@c.SectionId" selected>@c.SectionName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@c.SectionId">@c.SectionName</option>
+                                        }
+                                    }
+                                </select>
+                                <label for="statusoftable">Section*</label>
+                                <span class="text-danger" asp-validation-for="Table.SectionId"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="capacityoftableforedit" placeholder="0"
+                                    asp-for="Table.Capacity">
+                                <label for="floatingInput">Capacity*</label>
+                                <span class="text-danger" asp-validation-for="Table.Capacity"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <select class="form-select" id="statusoftableforedit" disabled style="height: 60px !important;" asp-for="Table.Status">
+                                    <option value="Available" selected>Available</option>
+                                    <option value="Occupied">Occupied</option>
+                                </select>
+                                <label for="statusoftable">Status</label>
+                                <span class="text-danger" asp-validation-for="Table.Status"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn custom-btn-bg text-white fw-medium">Save</button>
+                        <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- add Table modal -->
+<div class="modal fade" id="AddTablemodal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content w-100">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Table</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-action="AddTable" asp-controller="Section" method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="NameofTable" placeholder="T1"
+                                    asp-for="Table.Name">
+                                <label for="NameofTable">Name*</label>
+                                <span class="text-danger" asp-validation-for="Table.Name"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="statusoftable" style="height: 58px !important;" asp-for="Table.SectionId">
+                                    <option value="" selected>Select Section</option>
+                                    @foreach (var c in Model.Sections)
+                                    {
+                                        <option value="@c.SectionId">@c.SectionName</option>
+                                    }
+                                </select>
+                                <label for="statusoftable">Section*</label>
+                                <span class="text-danger" asp-validation-for="Table.SectionId"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" id="floatingInput" placeholder="0" asp-for="Table.Capacity">
+                                <label for="floatingInput">Capacity*</label>
+                                <span class="text-danger" asp-validation-for="Table.Capacity"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <select class="form-select" id="statusoftable" style="height: 58px !important;" disabled asp-for="Table.Status">
+                                    <option value="Available" selected>Available</option>
+                                    <option value="Occupied">Occupied</option>
+                                </select>
+                                <label for="statusoftable">Status</label>
+                                <span class="text-danger" asp-validation-for="Table.Status"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 ">
+                        <button type="submit" class="btn custom-btn-bg text-white fw-medium">Save</button>
+                        <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* Delete Table Modal *@
+
+<div class="modal fade" tabindex="-1" id="deletetablemodal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3" style="width: 420px !important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-center">
+                    <img class="alert_img" width="100px" height="100px"
+                        src="~/images/toppng.com-warning-icon-2400x2400.png" alt="">
+                </div>
+                <div class="d-flex justify-content-center ">Are you sure you want to delete this Table?</div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <a id="deleteTableBtn">
+                    <button type="button" class="btn custom-btn-bg text-white px-4">Yes</button>
+                </a>
+                <button type="button" class="btn custom-blue-border custom-blue-color px-3" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* Delete multiple Table Modal *@
+
+<div class="modal fade" tabindex="-1" id="deletemultipletablemodal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3" style="width: 420px !important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-center">
+                    <img class="alert_img" width="100px" height="100px"
+                        src="~/images/toppng.com-warning-icon-2400x2400.png" alt="">
+                </div>
+                <div class="d-flex justify-content-center ">Are you sure you want to delete these Tables?</div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <a id="deletemultipleTableBtn">
+                    <button type="button" class="btn custom-btn-bg text-white px-4">Yes</button>
+                </a>
+                <button type="button" class="btn custom-blue-border custom-blue-color px-3" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* ============================== *@
+<script>
+    $(document).ready(function () {
+        loadsection();
+        TableListPaginationAjax();
+    })
+</script>
+
+<script src="~/js/SectionView.js"></script>

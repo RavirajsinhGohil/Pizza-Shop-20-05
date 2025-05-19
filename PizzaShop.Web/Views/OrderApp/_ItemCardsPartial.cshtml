@@ -1,0 +1,62 @@
+@model List<PizzaShop.Entity.Models.Item>
+
+<div class="row">
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="col-12">
+            <div class="fs-5 text-center">
+                No items available.
+            </div>
+        </div>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            var itemType = item.Itemtype;
+            switch (itemType)
+            {
+                case "Veg":
+                    itemType = "success";
+                    break;
+                case "Non-Veg":
+                    itemType = "danger";
+                    break;
+                case "Vegan":
+                    itemType = "warning ";
+                    break;
+                default:
+                    itemType = "secondary";
+                    break;
+            }
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card shadow rounded-4 border-0 d-flex flex-row align-items-center p-2 mb-3 position-relative"
+                    style="height: 70px; width: 100%; overflow: hidden; cursor: pointer; border-radius: 0.75em !important;"
+                    onclick="loadModifiers(@item.Itemid)">
+
+                    <!-- Diagonal corner ribbon -->
+                    <div class="corner-diagonal bg-@itemType"></div>
+
+                    <!-- Image -->
+                    <div class="img-fluid me-1" style="width: 43px; height: 43px;">
+                        <img src="~/images/dining-menu.png" style="width: 43px; height: 43px;" alt="">
+                        @* <img src="@(item.pho ?? "/images/dining-menu.png")" alt="@item.Itemname"
+                        style="height: 100%; width: 100%; object-fit: cover; border-radius: 50%;"> *@
+                    </div>
+
+                    <!-- Name and price -->
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0 fw-semibold text-truncate">@item.Itemname</h6>
+                        <small class="text-muted">₹@item.Rate</small>
+                    </div>
+
+                    <!-- Heart icon -->
+                    <div class="ms-2">
+                        <i class="bi @(item.Isfavorite == true ? "bi-heart-fill text-primary" : "bi-heart")"
+                            style="font-size: 1rem; cursor: pointer;" onclick="toggleFavorite(@item.Itemid, this)"></i>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

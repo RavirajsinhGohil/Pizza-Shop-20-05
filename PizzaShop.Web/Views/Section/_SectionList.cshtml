@@ -1,0 +1,69 @@
+@model PizzaShop.Entity.ViewModel.SectionNameListViewModel
+
+@{
+    var canAddEdit = Convert.ToBoolean(ViewData["CanAddEdit"]);
+    var canView = Convert.ToBoolean(ViewData["CanView"]);
+    var canDelete = Convert.ToBoolean(ViewData["CanDelete"]);
+}
+
+@* @ category list  @ *@
+@foreach (var c in Model.Sections)
+{
+    <div class="category-option d-flex justify-content-between align-items-center gap-2 @(Model.SelectedSection == c.SectionId ? "category-active-option" : "")"
+        id="category_option" section-id="@c.SectionId">
+        <div class="d-flex gap-2" style="cursor: pointer;" id="loadFunctionParameter" onclick="loadsection(this)" data-selected-section="@Model.SelectedSection" section-id="@c.SectionId">
+            <img src="~/images/Download/dots-six.svg" width="25px" height="25px"
+                style="width: 25px !important; height: 25px !important;" alt="" class="">
+            <div class="fw-bold">@c.SectionName</div>
+        </div>
+
+        <div class="d-flex justify-content-between d-none" id="categoryoption_actionbtn">
+            @if(canAddEdit)
+            {
+                <img class="btn p-1" src="~/images/Download/pencil.svg" alt="" data-bs-toggle="modal" title="Edit" data-bs-target="#Editsectionmodal"
+                    onclick="setEditSectionData(this)" item-obj='@Html.Raw(Json.Serialize(c))'>
+            }
+            
+            @if(canDelete)
+            {
+                <img class="btn p-1" src="~/images/Download/trash.svg" data-bs-toggle="modal" title="Delete" data-bs-target="#deletesectionmodal"
+                    onclick="setDeleteSectionId(this)" section-id="@c.SectionId" alt="">
+            }
+        </div>
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        attachHoverEffect(); // Call the function when the page loads
+    });
+
+    // Function to handle hover effect
+    function attachHoverEffect() {
+        document.querySelectorAll(".category-option").forEach(opt => {
+            opt.addEventListener("mouseover", function () {
+                let actionbtn = opt.querySelector("#categoryoption_actionbtn");
+                if (actionbtn) {
+                    actionbtn.classList.add("d-block");
+                    actionbtn.classList.remove("d-none");
+                }
+            });
+
+            opt.addEventListener("mouseleave", function () {
+                let actionbtn = opt.querySelector("#categoryoption_actionbtn");
+                if (actionbtn) {
+                    actionbtn.classList.remove("d-block");
+                    actionbtn.classList.add("d-none");
+                }
+            });
+        });
+    }
+
+    // If the partial view is loaded dynamically, reattach events
+    $(document).on("ajaxComplete", function () {
+        attachHoverEffect();
+    });
+
+
+
+</script>

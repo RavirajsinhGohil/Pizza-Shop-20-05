@@ -1,0 +1,101 @@
+@model PizzaShop.Entity.ViewModel.MenuItemViewModel;
+
+<div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content w-100">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modifierModalLabel">Update Modifier</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body w-100">
+            <form id="EditModifierForm" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <select class="form-select" asp-for="Modifier.ModifierGroupId">
+                            @foreach (var modifierGroup in Model.ModifierGroups)
+                            {
+                                @if (modifierGroup.ModifierGroupId == Model.Modifier.ModifierGroupId)
+                                {
+                                    <option value="@modifierGroup.modifierGroupName" selected>
+                                        @modifierGroup.modifierGroupName
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@modifierGroup.modifierGroupName">
+                                        @modifierGroup.modifierGroupName
+                                    </option>
+                                }
+                            }
+                            @* <label for="form-select">Select Modifier Group</label> *@
+                        </select>
+                    </div>
+                    <input type="hidden" id="editItemId" asp-for="Modifier.ModifierId"
+                        value="@Model.Modifier.ModifierId" />
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="Name1" asp-for="Modifier.Name"
+                                placeholder="Name">
+                            <label for="name">Name*</label>
+                            <span asp-validation-for="Modifier.Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="Rate1" asp-for="Modifier.Rate"
+                                 placeholder="Rate">
+                            <label for="rate">Rate</label>
+                            <span asp-validation-for="Modifier.Rate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="Quantity1" asp-for="Modifier.Quantity"
+                                 placeholder="Quantity">
+                            <label for="quantity">Quantity</label>
+                            <span asp-validation-for="Modifier.Quantity" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="Unit1" style="height: 58px !important;" asp-for="Modifier.Unit" aria-label="Select Unit">
+                                @if(Model.Modifier.Unit == "Kg")
+                                {
+                                    <option value="Kg" selected>Kg</option>
+                                    <option value="Gram">Gram</option>
+                                    <option value="Litre">Litre</option>
+                                }
+                                else if (Model.Modifier.Unit == "Gram")
+                                {
+                                    <option value="Kg">Kg</option>
+                                    <option value="Gram" selected>Gram</option>
+                                    <option value="Litre">Litre</option>
+                                }
+                                else if (Model.Modifier.Unit == "Litre")
+                                {
+                                    <option value="Kg">Kg</option>
+                                    <option value="Gram">Gram</option>
+                                    <option value="Litre" selected>Litre</option>
+                                }
+                            </select>
+                            <label for="unit">Unit</label>
+                            <span asp-validation-for="Modifier.Unit" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-floating mt-3">
+                    <textarea class="form-control" id="Description1" asp-for="Modifier.Description"
+                        placeholder="Description">@Model.Modifier.Description</textarea>
+                    <label for="description">Description</label>
+                </div>
+                <div class="modal-footer px-0">
+                    <button type="submit" class="btn custom-btn-bg text-white">Save</button>
+                    <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

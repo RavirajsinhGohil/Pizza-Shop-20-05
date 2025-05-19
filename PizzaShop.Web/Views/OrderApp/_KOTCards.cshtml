@@ -1,0 +1,198 @@
+@model List<PizzaShop.Entity.ViewModel.KOTOrderCardViewModel>
+
+@{
+    bool first = true;
+    Layout = null;
+    @* var CategoryName = Model.OrdersDeatil[0].items.FirstOrDefault().CategoryName; *@
+}
+<div class="bg-white p-2">
+    <div class="KOTCardsHeading d-flex align-items-center justify-content-between mb-3">
+    <div class="custom-blue-color p-2 fw-bold">
+        @if(Model[0].CategoryName == null)
+        {
+            <span>All</span>
+        }
+        else
+        {
+            @Model[0].CategoryName
+        }
+    </div>
+    <div class="KOTBtns">
+        <button id="inProgressBtn" class="btn custom-btn-bg text-white">In Progress</button>
+        <button id="readyBtn" class="btn custom-blue-border custom-blue-color">Ready</button>
+        <button class="btn custom-blue-border custom-blue-color fw-bold" onclick="prevSlide()">&lt;</button>
+        <button class="btn custom-blue-border custom-blue-color fw-bold" onclick="nextSlide()">&gt;</button>
+    </div>
+</div>
+
+<div id="cardWrapper" class="overflow-hidden position-relative" style="width: 100%;">
+    <div id="cardSlider" class="d-flex flex-nowrap" style="transition: transform 0.5s ease; gap: 1rem;">
+
+    @if(Model != null && Model.Count > 0)
+    {
+        @foreach (var order in Model)
+        {
+            if (order.Items.All(item => item.InProgressQuantity == 0))
+            {
+                continue; 
+            }
+            string? sectionName = Model.First().SectionTable.FirstOrDefault()?.SectionName ?? "N/A";
+            string? tableNames = string.Join(", ", order.SectionTable.Select(t => t.TableName));
+            TimeSpan timeSinceOrder = DateTime.Now - order.CreatedAt;
+            string? timeRemainingFormatted = $"{(int)timeSinceOrder.TotalDays} days {(int)timeSinceOrder.Hours} hours {(int)timeSinceOrder.Minutes} min {(int)timeSinceOrder.Seconds} sec";
+            
+            <button type="button" class="btn openOrderModal d-flex pe-2 me-3" data-order='@Html.Raw(Json.Serialize(order))' style="width: 410px; flex: 0 0 auto; margin: 10px;" data-bs-toggle="modal" data-bs-target="#inProgressModal" data-order-id="@order.OrderId">
+                <div class="kotCard overflow-auto w-100" style="height: 40vh !important;">
+                    <div class="card h-100 d-flex flex-column  order-card" data-order-id="@order.OrderId" style="cursor: pointer; border: 1.5px solid #979797 ; border-style: dashed;">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="custom-blue-color h5"><strong>#@order.OrderId</strong></div>
+                                <div class="d-flex align-items-center">
+                                    <img src="~/images/Download/stopwatch.svg"class="me-1" >
+                                    <span class="text-muted updatedLiveTimeKOT" data-starttime="@order.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div>@sectionName • </div>
+                                <div>@tableNames</div>
+                            </div>
+                        </div>
+
+                        <div class="card-body overflow-auto p-2">
+                            @foreach (var item in order.Items)
+                            {
+                                <div class="d-flex justify-content-between mt-2">
+                                    <p class="text-secondary p-0 m-0 fw-medium">@item.ItemName</p>
+                                    <p class="text-secondary p-0 m-0 fw-medium">@item.InProgressQuantity</p>
+                                </div>
+
+                                @if (item.Modifiers != null && item.Modifiers.Any())
+                                {
+                                    <ul class="list  mb-1">
+                                        @foreach (var mod in item.Modifiers)
+                                        {
+                                            <li class="d-flex justify-content-start p-0">• @mod.ModifierName</li>
+                                        }
+                                    </ul>
+                                }
+
+                                @if (!string.IsNullOrEmpty(item.ItemInstruction))
+                                {
+                                    <div class=" mb-2 d-flex justify-content-start">
+                                        <span class="text-info">Instruction:&nbsp;</span>
+                                        <span class="text-secondary">@item.ItemInstruction</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <div class="card-footer p-2 text-body-secondary" style="height: 70px;">
+                            @if (!string.IsNullOrEmpty(order.OrderInstruction))
+                            {
+                                <div class="d-flex justify-content-start">
+                                    <div class="text-info">Order Instruction:&nbsp;</div>
+                                    <div class="text-secondary">@order.OrderInstruction</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </button>
+        }
+    }
+    else
+    {
+        <span class="text-danger">No Orders Found</span>
+    }
+    
+</div>
+</div>
+
+@* modal *@
+<div class="modal fade" id="inProgressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Order Id: #</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body table-responsive">
+                    <table class="table fs-6">
+                        <thead>
+                            <tr class="d-flex justify-content-between">
+                                <th>Item</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderDetailsModalBody">
+                            <!-- Order details will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="markReadyBtn" type="button" class="btn custom-btn-bg text-white d-none">Mark as Ready</button>
+                    <button id="markInProgressBtn" data-order-id="Model.order" type="button" class="btn custom-btn-bg text-white d-none">Mark as In Progress</button>
+                    <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    var currentPage = 0;
+    var cardWidth = 450;
+
+    function getSliderInfo() {
+        const cardSlider = document.getElementById("cardSlider");
+        const cardWrapper = document.getElementById("cardWrapper");
+
+        const visibleWidth = cardWrapper.offsetWidth;
+        let cardsPerPage = 0;
+        if(visibleWidth > cardWidth)
+        {
+            cardsPerPage = Math.floor(visibleWidth / cardWidth) ;
+        }
+        else
+        {
+            cardsPerPage = Math.floor(cardWidth / visibleWidth ) ;
+        }
+        const totalCards = cardSlider.children.length;
+        const totalPages = Math.ceil(totalCards / cardsPerPage);
+
+        return { cardSlider, cardsPerPage, totalPages };
+    }
+
+    function nextSlide() {
+        const { cardSlider, cardsPerPage, totalPages } = getSliderInfo();
+
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+        } else {
+            currentPage = 0;
+        }
+        updateSlide(cardSlider, cardsPerPage);
+    }
+
+    function prevSlide() {
+        const { cardSlider, cardsPerPage, totalPages } = getSliderInfo();
+
+        if (currentPage > 0) {
+            currentPage--;
+        } else {
+            currentPage = totalPages - 1;
+        }
+        updateSlide(cardSlider, cardsPerPage);
+    }
+
+    function updateSlide(cardSlider, cardsPerPage) {
+        const offset = -(currentPage * cardsPerPage * cardWidth);
+        cardSlider.style.transform = `translateX(${offset}px)`;
+    }
+
+    $(document).ready(function () {
+        console.log("KOT Cards JS loaded");
+        const categoryId = $('#kotTabs button.active').data('id');
+        setupKOTCardButtons(categoryId);
+    });
+    
+</script>

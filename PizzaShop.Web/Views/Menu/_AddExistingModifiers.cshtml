@@ -1,0 +1,67 @@
+@model PizzaShop.Entity.ViewModel.MenuItemViewModel
+<div class="table-responsive" id="existingModifiersForEditGroupTable">
+    <table class="table" style="border-top: none;">
+        <thead>
+            <tr>
+                <th scope="col" style="width: 40px; border-top: none;">
+                    <input class="form-check-input" type="checkbox" value="">
+                </th>
+                <th scope="col" style="border-top: none;">Name</th>
+                <th scope="col" style="border-top: none;" class="text-center">Unit</th>
+                <th scope="col" style="border-top: none;" class="text-center">Rate</th>
+                <th scope="col" style="border-top: none;" class="text-center">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <form id="addExistingModifiersForm">
+                @foreach (var modifier in Model.Modifiers)
+                {
+                    <tr>
+                        <th scope="row" style="border-top: 1px solid rgb(182, 177, 177);">
+                            <input class="form-check-input modifiersIdsForEdit rowModifierCheck_@modifier.ModifierId" type="checkbox" data-id='@modifier.ModifierId'
+                                data-name="@modifier.Name">
+                            <input type="hidden" data-id="@modifier.ModifierId">
+                        </th>
+                        <td style=" border-top: 1px solid rgb(182, 177, 177);">
+                            @* <img src="~/@item.Itemimage" class="me-2" style="width: 40px; height: 40px;" alt="abcd"> *@
+                            @modifier.Name
+                        </td>
+                        <td class="text-center" style=" border-top: 1px solid rgb(182, 177, 177);">@modifier.Unit</td>
+                        <td class="text-center" style=" border-top: 1px solid rgb(182, 177, 177);">@modifier.Rate</td>
+                        <td class="text-center" style=" border-top: 1px solid rgb(182, 177, 177);">@modifier.Quantity</td>
+                    </tr>
+                }
+            </form>
+        </tbody>
+    </table>
+
+    <div class="d-flex align-items-center justify-content-end">
+        <label for="pageSizes" class="pe-3">Items per page:</label>
+        <div class="mt-3 d-flex me-3 " style="height: 37px; width: 50px; margin: 0px !important;">
+            <select style="border-radius: 5px; height: 40px;" id="pageSizesForAddExistingModifiersEdit">
+                @foreach (var size in new[] { 5, 10, 15, 20 })
+                {
+                    <option value="@size" selected="@(Model.PageSize == size ? "selected" : null)">@size</option>
+                }
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <span id="currentPageDisplay">Showing @Model.FromItem-@Model.ToItem of @Model.totalItems</span>
+            <button id="prevPageForAddExistingModifiersEdit" class="mx-2 btn bg-white border" @(Model.CurrentPage == 1 ? "disabled" :
+                                                                                          "")>&lt;</button>
+            <button id="nextPageForAddExistingModifiersEdit" class="ms-2 btn bg-white border" @(Model.CurrentPage == Model.TotalPages ?
+                                                                                          "disabled" : "")>&gt;</button>
+        </div>
+    </div>
+    <div class="create_cancel_btn ">
+        <button type="button" id="saveAddExistingModifiers" class="btn custom-btn-bg text-white">Add</button>
+        <a class="btn custom-blue-border custom-blue-color" data-bs-toggle="modal">Cancel</a>
+    </div>
+
+    @* Hidden fields *@
+    <input type="hidden" id="currentPageForExistingModifiersEdit" value="@Model.CurrentPage" />
+    <input type="hidden" id="pageSizeForExistingModifiersEdit" value="@Model.PageSize" />
+    <input type="hidden" id="totalPagesForExistingModifiersEdit" value="@Model.TotalPages" />
+    <input type="hidden" id="totalItemsForExistingModifiersEdit" value="@Model.totalItems" />
+</div>

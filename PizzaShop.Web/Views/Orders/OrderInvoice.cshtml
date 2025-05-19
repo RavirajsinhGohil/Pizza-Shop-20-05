@@ -1,0 +1,304 @@
+@{
+    decimal subtotal = 0;
+
+    int count = Model.items.Count;
+    if(count > 0)
+    {
+        foreach(var item in Model.items)
+        {
+            subtotal += (decimal)(item.OrderTotalAmount ?? 0);
+            if (item.Modifiers != null && item.Modifiers.Count > 0)
+            {
+                foreach (var mod in item.Modifiers)
+                {
+                    subtotal += (decimal)(mod.OrderTotalAmount ?? 0);
+                }
+            }
+        }
+    }
+
+    decimal gst = 0, cgst = 0, sgst = 0;
+
+    if (Model.Taxes.Count > 0) gst = (decimal)Model.Taxes[0].TaxAmount;
+    if (Model.Taxes.Count > 1) cgst = (decimal)Model.Taxes[1].TaxAmount;
+    if (Model.Taxes.Count > 2) sgst = (decimal)Model.Taxes[2].TaxAmount;
+
+    decimal total = (decimal)subtotal + (decimal)gst + (decimal)cgst + (decimal)sgst;
+
+    var year = DateTime.Now.Year;
+}
+
+@model PizzaShop.Entity.ViewModel.OrderDetailViewModel
+@{
+    ViewData["Title"] = "Order Invoice";
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Invoice</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="icon" type="image/x-icon" href="~/images/logos/pizzashop_logo.png">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <style>
+        .pizzaShopLogo {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .orderInvoice {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .pizzaShopLogo img {
+            max-height: 60px;
+        }
+
+        .custom-blue-color {
+            color: #0066A7;
+        }
+
+        .custom-bg-blue {
+            background-color: #0066A7 !important;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-left: -15px;
+            margin-right: -15px;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding-left: 15px;
+            padding-right: 15px;
+            box-sizing: border-box;
+        }
+
+        .text-md-end {
+            text-align: right;
+        }
+
+        .fw-bold {
+            font-weight: bold;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #dee2e6;
+            padding: 0.75rem;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .table thead th {
+            background-color: #0066A7;
+            color: #fff;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .flex-column {
+            flex-direction: column;
+        }
+
+        .justify-content-end {
+            justify-content: flex-end;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .mt-5 {
+            margin-top: 3rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin: 1rem 0;
+        }
+    </style>
+
+</head>
+
+<div class="orderInvoice">
+    <div class="pizzaShopLogo">
+        <img src="http://localhost:5112/images/logos/pizzashop_logo.png" class="img-fluid" alt="Logo"
+            style="max-height: 60px;" />
+        <h2 class=" custom-blue-color">PIZZASHOP</h2>
+    </div>
+
+    <div class="row customerAndOrder mb-4">
+        <div class="col-md-6">
+            <h4 class="custom-blue-color">Customer Details</h4>
+            <div>Name: @Model.customer.Firstname</div>
+            <div>Mob: @Model.customer.Phone</div>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <h4 class="fw-bold custom-blue-color">Order Details</h4>
+            <div>Invoice Number: #DOM<span>@year</span><span>@Model.order.InvoiceId</span></div>
+            <div>Date: @Model.order.Createdat.ToString("dd-MM-yyyy HH:mm")</div>
+            <div>Section: @Model.tables.FirstOrDefault()?.SectionName</div>
+            <div class="d-flex ">
+                <div>Table : </div>
+                <div class="ms-2 d-flex flex-wrap">
+                    @foreach (var table in Model.tables)
+                    {
+                        <div class="d-flex me-2">
+                            @table.TableName
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table ">
+            <thead class="table text-white custom-bg-blue">
+                <tr>
+                    <th>Sr.No.</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.items.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <div>@Model.items[i].Name</div>
+                                @if (@Model.items[i].Modifiers.Count > 0)
+                                {
+                                    @foreach (var mod in Model.items[i].Modifiers)
+                                    {
+                                        <div class="ms-2">
+                                            @mod.Name
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <div>@Model.items[i].OrderQuantity</div>
+                                @if (Model.items[i].Modifiers.Count > 0)
+                                {
+                                    foreach (var mod in Model.items[i].Modifiers)
+                                    {
+                                        <div>
+                                            @mod.OrderQuantity
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <div>@Model.items[i].OrderPrice</div>
+                                @if (Model.items[i].Modifiers.Count > 0)
+                                {
+                                    foreach (var mod in Model.items[i].Modifiers)
+                                    {
+                                        <div>
+                                            @mod.OrderPrice
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <div>@Model.items[i].OrderTotalAmount</div>
+                                @if (Model.items[i].Modifiers.Count > 0)
+                                {
+                                    foreach (var mod in Model.items[i].Modifiers)
+                                    {
+                                        <div>
+                                            @mod.OrderTotalAmount
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex flex-column justify-content-end">
+        <div class="d-flex justify-content-between">
+            <div>Subtotal:</div>
+            @subtotal.ToString("0.00")
+        </div>
+        <div class="d-flex justify-content-between">
+            <div>CGST</div>
+            @cgst
+        </div>
+        <div class="d-flex justify-content-between">
+            <div>SGST</div>
+            @sgst
+        </div>
+        <div class="d-flex justify-content-between">
+            <div>GST</div>
+            @gst
+        </div>
+        <div class="d-flex justify-content-between">
+            <div>Other</div>
+            0.00
+        </div>
+        <hr>
+        <div class="custom-blue-color d-flex justify-content-between fw-bold">
+            <div>Total Amount Due:</div>
+            @total.ToString("0.00")
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h4 class="fw-bold custom-blue-color">Payment Information</h4>
+        <p>Payment Method: @Model.order.Status</p>
+    </div>
+
+    <div class="text-center mt-5">
+        <h4 class="custom-blue-color fw-bold">THANK YOU!</h4>
+    </div>
+</div>

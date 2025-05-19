@@ -1,0 +1,338 @@
+@model PizzaShop.Entity.ViewModel.WaitingListViewModel
+
+@{
+    ViewData["Title"] = "Waiting List";
+    Layout = "_OrderAppLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="custom-blue-color fw-bold">Waiting List</h2>
+    <button class="btn  custom-blue-border custom-blue-color" style="height: fit-content; text-wrap: nowrap;" data-bs-toggle="modal"
+        data-bs-target="#waitingTokenModal" type="button">
+        + Waiting Token
+    </button>
+</div>
+
+<ul class="nav nav-tabs mb-3" style="border: none !important; box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;;"
+    role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link sectionBtn custom-blue-color active" data-id="0" id="allCategory" data-bs-toggle="tab"
+            type="button" role="tab" aria-controls="allCategory" aria-selected="true">
+            All
+            <span style="background-color: #a39f9f;" class="w-100 px-2 rounded-circle h-100">
+                @Model.Sections.Sum(w => w.WaitingTokenList.Count)
+            </span>
+        </button>
+    </li>
+    @foreach (var sections in Model.Sections)
+    {
+        <li class="nav-item" role="presentation">
+            <a class="nav-link sectionBtn custom-blue-color" data-id="@sections.SectionId"
+                data-section-name="@sections.SectionName" data-bs-toggle="tab" type="button" role="tab">
+                @sections.SectionName
+                <span style="background-color: #a39f9f;" class="w-100 px-2 rounded-circle h-100">
+                    @sections.WaitingTokenList.Count
+                </span>
+            </a>
+        </li>
+    }
+</ul>
+
+<div class="tab-content" style="box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;" id="nav-tabContent">
+    <div class="tab-pane fade show active" style="display: block;" id="allCategory" role="tabpanel"
+        aria-labelledby="allCategory">
+        <div class="row " id="waitingListContainer">
+            <!-- Dynamically load Waiting tokens -->
+        </div>
+    </div>
+</div>
+
+<!-- Add Waiting Token Modal -->
+<div class="modal fade" id="waitingTokenModal" tabindex="-1" aria-labelledby="waitingTokenModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header">
+                <h5 class="modal-title" id="waitingTokenModalLabel">Waiting Token Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="waitingTokenForm" asp-controller="OrderApp" asp-action="AddWaitingTokenForAll" method="post">
+                <input type="hidden" name="SectionId" id="SectionId" />
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="email" asp-for="WaitingToken.Email" class="form-control" id="customerEmailWaitingToken" placeholder="Email" />
+                        <label for="floatingEmail">Email*</label>
+                        <span asp-validation-for="WaitingToken.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="WaitingToken.Name" class="form-control" id="customerNameWaitingToken" placeholder="Name" />
+                        <label for="floatingName">Name*</label>
+                        <span asp-validation-for="WaitingToken.Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="WaitingToken.Phone" class="form-control" id="customerPhoneWaitingToken"
+                            placeholder="Mobile Number" pattern="^[0-9]{10}$" />
+                        <label for="floatingPhone">Mobile Number*</label>
+                        <span asp-validation-for="WaitingToken.Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col form-floating mb-3">
+                            <input type="number" asp-for="WaitingToken.TotalPersons" class="form-control" id="floatingPersons"
+                                placeholder="No. of Persons"  />
+                            <label for="floatingPersons">No. of Person(s)*</label>
+                            <span asp-validation-for="WaitingToken.TotalPersons" class="text-danger"></span>
+                        </div>
+                        <div class="col form-floating mb-3">
+                            <select asp-for="WaitingToken.SectionId123" style="height: 58px !important;" class="form-select" id="floatingSection">
+                                <option value="" disabled selected>Select Section</option>
+                                @foreach (var s in Model.Sections)
+                                {
+                                    <option value="@s.SectionId">@s.SectionName</option>
+                                }
+                            </select>
+                            <label for="floatingSection">Section*</label>
+                            <span asp-validation-for="WaitingToken.SectionId123" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn custom-btn-bg text-white">Save</button>
+                    <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Waiting Token Modal -->
+<div class="modal fade" id="editWaitingTokenModal" tabindex="-1" aria-labelledby="waitingTokenModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header">
+                <h5 class="modal-title" id="waitingTokenModalLabel">Waiting Token Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="waitingTokenFormForEdit" asp-controller="OrderApp" asp-action="UpdateWaitingToken" method="post">
+                <input type="hidden" id="editTokenSectionId" />
+                <input type="hidden" id="editTokenId" asp-for="WaitingToken.WaitingTokenId" />
+                <input type="hidden" id="editTokenCustomerId" asp-for="WaitingToken.CustomerId"/>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="email" asp-for="WaitingToken.Email" class="form-control" id="editTokenEmail" placeholder="Email" />
+                        <label for="floatingEmail">Email*</label>
+                        <span asp-validation-for="WaitingToken.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="WaitingToken.Name" class="form-control" id="editTokenName" placeholder="Name" />
+                        <label for="floatingName">Name*</label>
+                        <span asp-validation-for="WaitingToken.Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" asp-for="WaitingToken.Phone" class="form-control" id="editTokenPhone"
+                            placeholder="Mobile Number" pattern="^[0-9]{10}$" />
+                        <label for="floatingPhone">Mobile Number*</label>
+                        <span asp-validation-for="WaitingToken.Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col form-floating mb-3">
+                            <input type="number" asp-for="WaitingToken.TotalPersons" class="form-control" id="editTokenPersons"
+                                placeholder="No. of Persons" min="1" />
+                            <label for="floatingPersons">No. of Person(s)*</label>
+                            <span asp-validation-for="WaitingToken.TotalPersons" class="text-danger"></span>
+                        </div>
+                        <div class="col form-floating mb-3">
+                            <select asp-for="WaitingToken.SectionId123" style="height: 58px !important;" class="form-select pe-none" id="editTokenSection">
+                                <option value="" disabled selected>Select Section</option>
+                                @foreach (var s in Model.Sections)
+                                {
+                                    <option value="@s.SectionId">@s.SectionName</option>
+                                }
+                            </select>
+                            <label for="floatingSection">Section*</label>
+                            <span asp-validation-for="WaitingToken.SectionId123" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn custom-btn-bg text-white">Save</button>
+                    <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* Assign Tables Modal *@
+<div class="modal fade" id="assignTableModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="assignForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Table</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="totalPersonsHidden" name="TotalPersons" />
+                    <input type="hidden" id="waitingTokenId" name="waitingTokenId" />
+                    <input type="hidden" id="customerName" name="customerName" />
+                    <input type="hidden" id="customerEmail" name="customerEmail" />
+                    <input type="hidden" id="customerMobile" name="customerMobile" />
+                    <input type="hidden" id="sectionName" name="sectionName" />
+
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            @* <div class="form-select"> *@
+                                <label for="sectionSelect">Section*<span class="text-danger">(Required)</span></label>
+                                <select id="sectionSelect" name="SectionId" class="form-control">
+                                    <option value="">Select Section</option>
+                                    <!-- Dynamic options -->
+                                </select>
+                            @* </div> *@
+                        </div>
+
+                        <div class="mb-3 col-6">
+                            <label for="tableSelect">Table*<span class="text-danger">(Required)</span></label>
+                            <select id="tableSelect" name="TableIds" class="form-control" multiple="multiple">
+                                <!-- Dynamic options -->
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn custom-btn-bg text-white">Assign</button>
+                    <button type="button" class="btn custom-blue-border custom-blue-color" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        fetchWaitingTokens(0);
+    });
+
+    //assign table js
+    $(document).on('click', '.assign-table-btn', function () {
+        const tokenId = $(this).data('id');
+        const totalPersons = $(this).data('total-persons');
+        const customerData = $(this).data('customer');
+
+        // Set hidden value
+        $('#totalPersonsHidden').val(totalPersons);
+        $('#waitingTokenId').val(customerData.TokenId);
+        $('#customerName').val(customerData.FullName);
+        $('#customerEmail').val(customerData.Email);
+        $('#customerMobile').val(customerData.Phone);
+        $('#sectionName').val(customerData.SectionName);
+
+        // Open modal
+        $('#assignTableModal').modal('show');
+
+        // Load sections
+        $.get('/OrderApp/GetSections', function (sections) {
+            const selectedSectionName = customerData.SectionName?.toLowerCase();
+            let selectedSectionId = null;
+
+            $('#sectionSelect').empty();
+
+            $.each(sections.result, function (i, section) {
+                const isSelected = section.sectionname.toLowerCase() === selectedSectionName ? 'selected' : '';
+                if (isSelected) {
+                    selectedSectionId = section.sectionid;
+                }
+
+                $('#sectionSelect').append(
+                    `<option value="${section.sectionid}" ${isSelected}>${section.sectionname}</option>`
+                );
+            });
+
+            if (selectedSectionId) {
+                $('#sectionSelect').val(selectedSectionId).trigger('change');
+            }
+        });
+
+        $('#tableSelect').empty().trigger('change');
+    });
+
+    // When section changes, load tables
+    $('#sectionSelect').on('change', function () {
+        const sectionId = $(this).val();
+        $('#tableSelect').empty();
+        $.get(`/OrderApp/GetTablesBySection?sectionId=${sectionId}`, function (tables) {
+            $.each(tables, function (i, table) {
+                $('#tableSelect').append(
+                    `<option value="${table.tableid}" data-capacity="${table.capacity}">${table.tablename}</option>`
+                );
+            });
+            $('#tableSelect').trigger('change');
+        });
+    });
+
+    // Initialize Select2 on modal show
+    $('#assignTableModal').on('shown.bs.modal', function () {
+
+        $('#sectionSelect, #tableSelect').select2({
+            dropdownParent: $('#assignTableModal'),
+            width: '100%',
+            placeholder: 'Select'
+        });
+
+        // Trigger validation for tableSelect when modal opens
+        $('#tableSelect').valid();
+    });
+
+    // Custom validator to ensure total table capacity >= total persons
+
+    // Form submit
+    $('#assignForm').on('submit', function (e) {
+        e.preventDefault();
+
+        @* if ($(this).valid()) { *@
+        const customerData = $(this).data('customer');
+        const model = {
+            Id: $('#waitingTokenId').val(),
+            Name: $('#customerName').val(),
+            Email: $('#customerEmail').val(),
+            Mobile: $('#customerMobile').val(),
+            NoOfPersons: $('#totalPersonsHidden').val(),
+            SelectedTableId: $('#tableSelect').val().join(',')
+        };
+
+        // Send the POST request
+        $.ajax({
+            url: '/OrderApp/AssignTableToCustomer',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(model),
+            success: function (response) {
+                window.location.href = `/OrderApp/MenuMenu?searchText=&categoryId=0&orderId=${response.orderId}`;
+                toastr.success('Tables assigned successfully. Order ID: ' + response.orderId);
+            },
+            error: function (xhr, status, error) {
+                toastr.error('An error occurred: ' + xhr.responseText);
+            }
+        });
+        @* } *@
+    });
+</script>
+
+<script src="~/js/WaitingListView.js"></script>

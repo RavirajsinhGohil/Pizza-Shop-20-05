@@ -1,0 +1,291 @@
+@{
+    decimal subtotal = 0;
+
+    int count = Model.items.Count;
+    if(count > 0)
+    {
+        foreach(var item in Model.items)
+        {
+            subtotal += (decimal)(item.OrderTotalAmount ?? 0);
+            if (item.Modifiers != null && item.Modifiers.Count > 0)
+            {
+                foreach (var mod in item.Modifiers)
+                {
+                    subtotal += (decimal)(mod.OrderTotalAmount ?? 0);
+                }
+            }
+        }
+    }
+
+    decimal gst = 0, cgst = 0, sgst = 0;
+
+    if (Model.Taxes.Count > 0) gst = (decimal)Model.Taxes[0].TaxAmount;
+    if (Model.Taxes.Count > 1) cgst = (decimal)Model.Taxes[1].TaxAmount;
+    if (Model.Taxes.Count > 2) sgst = (decimal)Model.Taxes[2].TaxAmount;
+
+    decimal total = (decimal)subtotal + (decimal)gst + (decimal)cgst + (decimal)sgst;
+
+    var year = DateTime.Now.Year;
+}
+
+@model PizzaShop.Entity.ViewModel.OrderDetailViewModel
+
+@{
+    @* Layout = null; *@
+    ViewData["Title"] = "Order Details";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    @* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> *@
+
+    <style>
+        td,
+        th,
+        span,
+        div {
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .table td,
+        .table th {
+            white-space: normal !important;
+        }
+
+        .row {
+            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+        }
+
+        /* Avoid content clipping */
+        .Order-Detail {
+            width: 100% !important;
+            padding: 20px;
+            box-sizing: border-box;
+            @* background-color: #F2F2F2; *@
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Order-Detail">
+        <div class=" d-flex justify-content-between align-items-center custom-blue-color"
+            style="margin-left: 10vw; margin-right: 10vw; ">
+            <div class="fw-bold fs-1 d-flex align-items-center">Order Details</div>
+            <a asp-controller="Orders" asp-action="Orders"
+                class="btn custom-blue-border custom-blue-color d-flex align-items-center h-50 fw-bold ms-3">Back</a>
+        </div>
+
+        <div class="" style="margin-left: 7vw; margin-right: 7vw; ">
+            <div class="row mx-5 bg-white" style="border-radius: 5px;">
+                <div class=" d-flex justify-content-between mt-2">
+                    <div class="fw-bold">
+                        Order Summary <span
+                            style="background-color: aqua; margin-left: 10px; padding: 2px">@Model.order.Status</span>
+                    </div>
+                    <a asp-controller="Orders" asp-action="OrderDetailPDF" asp-route-orderId="@Model.order.Orderid"
+                        type="button" id="exportInvoice" data-orderid="@Model.order.Orderid"
+                        class="btn custom-bg-blue text-white fw-bold d-flex align-items-center justify-content-end exportOrderDetails ">
+                        <i class="fa-solid fa-file-export me-2 mt-2 text-white "></i>
+                        <span>Export</span>
+                    </a>
+                </div>
+                <div>
+                    Invoice No. : #DOM<span>@year</span><span></span><span>@Model.order.InvoiceId</span>
+                </div>
+                <div class="d-flex">
+                    <div class="">
+                        Paid on : @Model.order.Createdat.ToString("dd-MM-yyyy hh:mm:ss")
+                    </div>
+                    <div class="ms-5">
+                        Modified on : @Model.order.UpdatedAt
+                    </div>
+                    <div class="ms-5">
+                        Order Duration : @(Model.order.UpdatedAt - Model.order.Createdat)
+                    </div>
+                </div>
+            </div>
+
+            <div class=" row mx-5 g-2 mt-5" style="background-color: #F2F2F2; border-radius: 5px;">
+                <div class="col bg-white m-2 p-2">
+                    <div class="fw-bold ">
+                        Customer Details
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div>
+                            Name : @Model.customer.Firstname
+                        </div>
+                        <div>
+                            Phone : @Model.customer.Phone
+                        </div>
+                        <div>
+                            No. of Person : @Model.order.NoOfPersons
+                        </div>
+                        <div>
+                            Email : @Model.customer.Email
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col bg-white m-2 p-2" style="border-radius: 5px;">
+                    <div class="fw-bold">
+                        Table Details
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="d-flex ">
+                            <div>Table : </div>
+                            <div class="ms-2 d-flex flex-wrap">
+                                @foreach (var table in Model.tables)
+                                {
+                                    <div class="d-flex me-2">
+                                        @table.TableName
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        Section : @Model.tables.FirstOrDefault()?.SectionName
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-left: 7vw; margin-right: 7vw;">
+
+            <div class=" row bg-white p-1 mx-5 third mt-4" style="border-radius: 5px;">
+                <div class="fw-bold">
+                    Order Items
+                </div>
+
+                <div class="w-100" style="width: 65vw !important;">
+                    <table class="table w-100 m-0 fs-6">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Sr. No
+                                </th>
+                                <th>
+                                    Item
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                                <th>Price</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.items.Count; i++)
+                            {
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <div>@Model.items[i].Name</div>
+                                            @if ( @Model.items[i].Modifiers.Count > 0)
+                                            {
+                                                @foreach (var mod in Model.items[i].Modifiers)
+                                                {
+                                                    <div class="ms-2">
+                                                        @mod.Name
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <div>@Model.items[i].OrderQuantity</div>
+                                            @if(Model.items[i].Modifiers.Count > 0)
+                                            {
+                                                foreach (var mod in Model.items[i].Modifiers)
+                                                {
+                                                    <div >
+                                                        @mod.OrderQuantity
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <div>@Model.items[i].OrderPrice</div>
+                                            @if(Model.items[i].Modifiers.Count > 0)
+                                            {
+                                                foreach (var mod in Model.items[i].Modifiers)
+                                                {
+                                                    <div >
+                                                        @mod.OrderPrice
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <div>@Model.items[i].OrderTotalAmount</div>
+                                            @if (Model.items[i].Modifiers.Count > 0)
+                                            {
+                                                foreach (var mod in Model.items[i].Modifiers)
+                                                {
+                                                    <div >
+                                                        @mod.OrderTotalAmount
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex flex-column align-items-end justify-content-end mt-3">
+                    <div class="d-flex justify-content-between flex-column" style="width: 30% !important;">
+                        <div class="d-flex justify-content-between">
+                            <div>Subtotal:</div>
+                            @subtotal.ToString("0.00")
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <div>CGST</div>
+                            @cgst
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>SGST</div>
+                            @sgst
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>GST</div>
+                            @gst
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>Other</div>
+                            0.00
+                        </div>
+                        @* <div class="d-flex justify-content-between">
+                            <div>Total:</div>
+                            @Model.order.TotalAmount
+                        </div> *@
+                        <div class="d-flex justify-content-between">
+                            <div>Total:</div>
+                            @total.ToString("0.00")
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

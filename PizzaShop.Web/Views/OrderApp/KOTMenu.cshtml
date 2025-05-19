@@ -1,0 +1,45 @@
+@model PizzaShop.Entity.ViewModel.KOTViewModel
+
+@{
+    ViewData["Title"] = "KOT";
+    var first = true;
+    Layout = "_OrderAppLayout";
+}
+
+<div class="container-fluid p-3">
+    <h3 class="fw-bold custom-blue-color">KOT</h3>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs bg-white mb-3 gap-1"
+        style="border: none !important; box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;" id="kotTabs"
+        role="tablist">
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link custom-blue-color active" data-id="0" data-category-name="All" id="allCategory"
+                data-bs-toggle="tab" type="button" role="tab" aria-controls="allCategory" aria-selected="true">
+                All
+            </button>
+        </li>
+
+        @foreach (var category in Model.Categories)
+        {
+            <li class="nav-item" role="presentation">
+                <button class="nav-link custom-blue-color" data-id="@category.Categoryid"
+                    data-category-name="@category.Name" id="@($"{category.Name}-tab")" data-bs-toggle="tab" type="button"
+                    role="tab">
+                    @category.Name
+                </button>
+            </li>
+        }
+    </ul>
+
+    <div class="tab-content" style="box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;" id="kotTabContent">
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        setupKOTTabs();
+       
+    });
+</script>
+<script src="~/js/KOTview.js"></script>

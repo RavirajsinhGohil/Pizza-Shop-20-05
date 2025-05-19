@@ -1,0 +1,41 @@
+@model PizzaShop.Entity.ViewModel.RolesViewModel;
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="add_user_heading d-flex justify-content-between">
+    <div class="fw-bold fs-2">Roles</div>
+</div>
+
+
+<div class="roles mb-2 pb-3">
+    <div class="role_heading d-flex justify-content-between">
+        <div class="fw-bold">Role</div>
+        <div class="fw-bold">Action</div>
+    </div>
+    <hr>
+    <div class="role_heading d-flex justify-content-between">
+        <div>Admin</div>
+        <div>
+                <a class="d-flex align-items-center" asp-controller="User" asp-action="Permissions" asp-route-role="Admin">
+                <img src="~/images/Download/pencil.svg" alt=""></a>
+        </div>
+    </div>
+    <hr>
+    <div class="role_heading d-flex justify-content-between">
+        <div>Account Manager</div>
+        <div>
+                <a class="d-flex align-items-center" asp-controller="User" asp-action="Permissions" asp-route-role="Account Manager" >
+                <img src="~/images/Download/pencil.svg" alt=""></a>
+        </div>
+    </div>
+    <hr>
+    <div class="role_heading d-flex justify-content-between">
+        <div>Chef</div>
+        <div>
+            <a class="d-flex align-items-center" asp-controller="User" asp-action="Permissions" asp-route-role="Chef" >
+                <img src="~/images/Download/pencil.svg" alt=""></a>
+        </div>
+    </div>
+</div>

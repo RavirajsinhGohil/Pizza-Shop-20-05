@@ -1,0 +1,85 @@
+@model PizzaShop.Entity.ViewModel.LoginViewModel;
+
+@{
+    ViewData["Title"] = "Login Page";
+    Layout = null;
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="icon" type="image/x-icon" href="~/images/logos/pizzashop_logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="login container-fluid overflow-hidden">
+        <partial name="_LoginToaster.cshtml"></partial>
+        <div class="row">
+            <div class="login_img p-0 col-lg-6 col-md-12">
+                <img class="img-fluid h-100 pizza_img" src="~/images/dominos_background.jpg" alt="">
+            </div>
+
+            <div class="login_body col-lg-6 col-md-12 d-flex flex-column justify-content-center">
+                <div class="login_heading d-flex w-100 align-items-center justify-content-center">
+                    <img class="img-fluid pizza_shop_logo" src="~/images/logos/pizzashop_logo.png"
+                        alt="Pizza shop logo not found">
+                    <div class="title fw-bold fs-3">PIZZASHOP</div>
+                </div>
+
+                <div class="login_main w-100">
+                    <div class="greeting mt-4 mb-3 fs-3">
+                        Welcome,
+                    </div>
+
+                    <form id="loginForm" method="post">
+                        <div class="form-floating input_item mb-3">
+                            <input type="email" class="form-control" id="email" style=" position: relative;;"
+                                placeholder="name@example.com" asp-for="Email">
+                            <label class="w-100" for="floatingInput">
+                                <div class="d-flex justify-content-between">
+                                    <div>Email*</div>
+                                </div>
+                            </label>
+                            <div style="position: absolute; right: 12px; top: 20px ;">
+                                <img src="~/images/icons/customer.svg" alt="">
+                            </div>
+                            <span class="text-danger" asp-validation-for="Email"></span>
+                        </div>
+                        <div class="form-floating input_item mb-3">
+                            <input style="position: relative;" asp-for="password" type="password" class="form-control"
+                                id="password" placeholder="Password">
+                            <i class="far fa-eye" id="togglePassword"
+                                style=" cursor: pointer; position: absolute;  right: 12px; margin-top: -37px;"></i>
+                            <label for="floatingPassword">Password*</label>
+                            <span class="text-danger" asp-validation-for="password"></span>
+                        </div>
+                        <div class="remember_forgot mb-3 d-flex justify-content-between">
+                            <div>
+                                <input type="checkbox" asp-for="RememberMe">
+                                <span>Remember Me</span>
+                            </div>
+                            <a class="forgotLink border-none" id="forgotPasswordLink">Forgot Password?</a>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn custom-btn-bg text-white w-100">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/js/LoginView.js"></script>

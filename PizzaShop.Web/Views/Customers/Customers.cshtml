@@ -1,0 +1,275 @@
+@model PizzaShop.Entity.ViewModel.CustomersListViewModel;
+
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<div class="add_user_heading d-flex justify-content-between align-items-center">
+    <div class="fw-bold fs-2 d-flex align-items-center">Customers</div>
+    <div class="d-flex">
+
+        @* <div class="form-floating"> *@
+            <input type="text" id="searchBox" style="width: 200px !important; height: 50px !important;"
+                class="form-control me-4" placeholder="Search">
+            @* <label for="searchBox" style="color: black;">Search</label> *@
+        @* </div> *@
+
+        <select class="form-select me-4" id="timeLog" style="height: 50px !important;">
+            <option value="All Time" selected>All Time</option>
+            <option value="Today">Today</option>
+            <option value="Last 7 days">Last 7 days</option>
+            <option value="Last 30 days">Last 30 days</option>
+            <option value="Current Month">Current Month</option>
+            <option value="Custom Date">Custom Date</option>
+        </select>
+
+        <button type="button" id="exportCustomersBtn" class="btn custom-bg-blue text-white fw-bold"
+            style="height: 50px !important;">Export</button>
+    </div>
+</div>
+
+<div class="add_user_form" style="box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;">
+    <div id="customerList" class="p-3">
+        @Html.Partial("_CustomerList", Model)
+    </div>
+</div>
+
+<!-- Custom Date Modal -->
+<div class="modal fade" id="customDateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Select Date Range</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 mb-3">
+                    <div class="col form-floating ">
+                        <input type="date" class="form-control dateFilter " id="fromDateFilter"
+                            placeholder="name@example.com">
+                        <label for="floatingInput">Start Date</label>
+                        <span class="text-danger" id="fromDateValidation"></span>
+                    </div>
+
+                    <div class="col form-floating ">
+                        <input type="date" class="form-control dateFilter " id="toDateFilter"
+                            placeholder="name@example.com">
+                        <label for="floatingInput">End Date</label>
+                        <span class="text-danger" id="toDateValidation"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn custom-btn-bg text-white " id="customDateSubmit" >Submit</button>
+                <button type="button" class="btn custom-blue-color custom-blue-border"
+                    data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        let currentPage = parseInt("@Model.Pagination.Page") || 1;
+        let searchTerm = '';
+        let pageSize = parseInt("@Model.Pagination.PageSize") || 5;
+        let totalItems = $('#totalItemssss').val() || 5;
+        let totalPages = $('#totalPagessss').val() || 1;
+        let sortBy = 'Name';
+        let sortOrder = 'asc';
+        let searchTimeout = 0;
+        let currentSortBy = "Name";
+        let currentSortOrder = "asc";
+        let timeLog = '';
+
+        fetchItems(searchTerm, 1, 5, sortBy, sortOrder, timeLog);
+
+        function fetchItems(search = "", page = 1, pageSizeValue = 5, sortBy, sortOrder, timeLog) {
+            $.ajax({
+                url: '@Url.Action("GetCustomerByPagination")',
+                type: 'GET',
+                data: {
+                    searchTerm: search,
+                    page: page,
+                    pageSize: pageSizeValue,
+                    sortBy: sortBy,
+                    sortOrder: sortOrder,
+                    timeLog: timeLog,
+                    CustomFromDate : $('#fromDateFilter').val(),
+                    CustomToDate : $('#toDateFilter').val()
+                },
+                success: function (data) {
+                    $("#customerList").html(data);
+                    let $data = $(data);
+                    totalPages = parseInt($('#totalPageess').val()) || 1;
+                    totalItems = parseInt($('#totalItems').val()) || 5;
+
+                    //  Update UI with new data
+                    $("#customerList").html(data);
+
+                    //  Update current page & page size
+                    currentPage = page;
+                    pageSize = pageSizeValue;
+
+                    @* updatePaginationButtons(); *@
+                },
+                error: function (xhr, status, error, data) {
+                }
+            });
+        }
+
+        //  Handle Previous Page Click
+        $(document).on('click', '#prevPage', function () {
+            if (currentPage > 1) {
+                fetchItems(searchTerm, currentPage - 1, pageSize, sortBy, sortOrder, timeLog);
+            }
+        });
+
+        //  Handle Next Page Click
+        $(document).on('click', '#nextPage', function () {
+            if (currentPage < totalPages) {
+                fetchItems(searchTerm, currentPage + 1, pageSize, sortBy, sortOrder, timeLog);
+            }
+        });
+
+        $(document).on('change', '#pageSizes', function () {
+            pageSize = parseInt($(this).val()) || 2;
+            fetchItems(searchTerm, 1, pageSize, sortBy, sortOrder, timeLog);
+        });
+
+        $(document).on('keyup', '#searchBox', function () {
+            clearTimeout(searchTimeout);
+            searchTerm = $(this).val();
+
+            searchTimeout = setTimeout(() => {
+                fetchItems(searchTerm, currentPage, pageSize, sortBy, sortOrder, timeLog);
+            }, 100);
+        });
+
+        //For sorting according to sortBy and sortOrder
+        $(document).on("click", ".sort-items", function (e) {
+            e.preventDefault();
+
+            currentSortBy = $(this).data("column");
+            @* let pageNumber = $(this).data("page"); *@
+
+                if (sortBy === currentSortBy) {
+                currentSortOrder = currentSortOrder === "asc" ? "desc" : "asc";
+            }
+            else {
+                sortBy = currentSortBy;
+                sortOrder = "asc";
+            }
+
+            fetchItems(searchTerm, 1, pageSize, sortBy, currentSortOrder, timeLog)
+            sortOrder = currentSortOrder === "asc" ? "desc" : "asc";
+        });
+
+        //For filter data according to time log
+        $(document).on('change', "#timeLog", function (e) {
+            timeLog = $(this).val();
+            if (timeLog === "Custom Date") {
+                var MyModal = new bootstrap.Modal(document.getElementById('customDateModal'));
+                MyModal.show();
+
+                $("#fromDateFilter").on('change', function () {
+                    var fromDate = $(this).val();
+                    if (fromDate) {
+                        // Set minimum selectable date for To Date
+                        $("#toDateFilter").attr("min", fromDate);
+                    } else {
+                        $("#toDateFilter").removeAttr("min");
+                    }
+                });
+
+                $("#toDateFilter").on('change', function () {
+                    var toDate = $(this).val();
+                    if (toDate) {
+                        // Set maximum selectable date for From Date
+                        $("#fromDateFilter").attr("max", toDate);
+                    } else {
+                        $("#fromDateFilter").removeAttr("max");
+                    }
+                });
+
+                //  Handle Submit Button Click
+                $(document).on('click', '#customDateSubmit', function () {
+                    debugger;
+                    var fromDate = $('#fromDateFilter').val();
+                    var toDate = $('#toDateFilter').val();
+                    timeLog = "Custom Date";
+
+                    if (fromDate && toDate) {
+                        fetchItems(searchTerm, 1, pageSize, sortBy, currentSortOrder, timeLog);
+                        MyModal.hide();
+                    }
+                    else {
+                        toastr.error("Please select both dates.");
+                    }
+                });
+            }
+            else {
+                fetchItems(searchTerm, 1, pageSize, sortBy, currentSortOrder, timeLog)
+            }
+        });
+
+        $(document).on('click', "#exportCustomersBtn", function () {
+            var searchTerm = $("#searchBox").val() || "";
+            var timeLog = $("#timeLog").val();
+
+            var url = `/Customers/ExportCustomersInExcel?searchTerm=${encodeURIComponent(searchTerm)}&timeLog=${encodeURIComponent(timeLog)}`;
+            window.location.href = url;
+        });
+
+        $(document).on("click", '.customerHistoryBtn', function () {
+            let customerId = $(this).data('id');
+
+            $.ajax({
+                url: '@Url.Action("CustomerHistory")',
+                type: 'GET',
+                data: {
+                    customerId: customerId
+                },
+                success: function (data) {
+                    $("#customerName").text(data.firstname);
+                    $("#customerPhone").text(data.phone);
+                    $("#maxOrder").text(data.maxOrder);
+                    $("#averageBill").text(data.averageBill);
+                    $("#comingSince").text(data.comingSince);
+                    console.log(data.comingSince);
+                    $("#visitCount").text(data.visits);
+                    // Clear previous rows if any
+                    $("#customerOrdersTable tbody").empty();
+                    // Append new rows
+                    data.customerOrders.forEach(customerOrder => {
+                        const row = `
+                                    <tr>
+                                        <td>${customerOrder.createdat}</td>
+                                        <td>${customerOrder.orderType}</td>
+                                        <td>${customerOrder.status}</td>
+                                        <td>${customerOrder.itemsCount}</td>
+                                        <td>${customerOrder.totalAmount}</td>
+                                    </tr>
+                                `;
+                        $("#customerOrdersTable tbody").append(row);
+                    });
+                    var MyModal = new bootstrap.Modal(document.getElementById('customerHistoryModal'));
+                    MyModal.show();
+                },
+                error: function (xhr, status, error, data) {
+                    console.error("AJAX Error:", status, error);
+                    console.error("Data :", data);
+                }
+            });
+        });
+    });
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>

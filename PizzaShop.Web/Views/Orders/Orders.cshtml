@@ -1,0 +1,62 @@
+@model PizzaShop.Entity.ViewModel.OrdersListViewModel;
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="add_user_heading d-flex justify-content-between" >
+    <div class="fw-bold fs-2 d-flex align-items-center">Orders</div>
+    <div class="d-flex">
+
+        @* <div class="form-floating"> *@
+            <input type="text" id="searchBox" style="width: 200px !important; height: 50px !important;" class="form-control me-4"
+                placeholder="Search">
+            @* <label for="searchBox" style="color: black;">Search</label> *@
+        @* </div> *@
+
+        <select class="form-select me-4" id="statusLog" style="height: 50px !important;" aria-label="Default select example">
+            <option value="All Status" selected>All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Served">Served</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="On Hold">On Hold</option>
+            <option value="Failed">Failed</option>
+        </select>
+
+        <select class="form-select me-4" style="height: 50px !important;" id="timeLog">
+            <option value="All Time" selected>All Time</option>
+            <option value="Last 7 days">Last 7 days</option>
+            <option value="Last 30 days">Last 30 days</option>
+            <option value="Current Month">Current Month</option>
+        </select>
+
+        <button type="button" id="exportOrdersBtn" class="btn orderExportBtn text-white fw-bold" style="height: 50px !important;">Export</button>
+    </div>
+</div>
+<div class="d-flex justify-content-end orderDateFilter">
+    <div class="form-floating  me-4" style="flex-wrap: wrap !important;">
+        <input type="date" class="form-control dateFilter" id="fromDate" placeholder="name@example.com">
+        <label for="floatingInput">From Date</label>
+        <span class="text-danger" id="fromDateValidation"  ></span>
+    </div>
+
+    <div class="form-floating me-4">
+        <input type="date" class="form-control dateFilter" id="toDate" placeholder="name@example.com">
+        <label for="floatingInput">To Date</label>
+        <span class="text-danger" id="toDateValidation" ></span>
+    </div>
+
+    <button id="searchOrdersBtn" class="btn btn-primary orderSearchBtn fw-bold me-4" style="height: 50px !important;">Search</button>
+
+    <button id="resetFilters" class="btn bg-white orderFilterCancelBtn custom-blue-color fw-bold" style="height: 50px !important;">Clear</button>
+</div>
+
+<div class="add_user_form" style="box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;">
+    <div id="orderList" class="p-3">
+        @Html.Partial("_OrderList", Model)
+    </div>
+</div>
+
+<script src="~/js/OrderView.js"></script>

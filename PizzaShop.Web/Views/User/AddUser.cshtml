@@ -1,0 +1,174 @@
+@model PizzaShop.Entity.ViewModel.AddUserViewModel;
+
+@{
+    ViewData["Title"] = "Add User";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+<div class="add_user_heading d-flex justify-content-between">
+    <div class="fw-bold fs-2">Add User</div>
+    <div class="d-flex">
+        <a asp-controller="User" asp-action="UserList"
+            class="btn custom-blue-borderBtn custom-blue-color d-flex align-items-center text-white ms-3">&lt; Back</a>
+    </div>
+</div>
+
+<form method="post" asp-controller="User" asp-action="AddUser" enctype="multipart/form-data">
+    <div class="add_user_form">
+        <div class="row mx-0">
+            <div class="col-lg-6 col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control add_user_input" asp-for="Firstname" id="floatingInput"
+                        placeholder="name@example.com">
+                    <label for="floatingInput">First Name*</label>
+                    <span asp-validation-for="Firstname" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control add_user_input" asp-for="Lastname" id="exampleInput"
+                        aria-describedby="emailHelp" placeholder="Last Name">
+                    <label for="floatingInput">Last Name*</label>
+                    <span asp-validation-for="Lastname" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mx-0">
+            <div class="col-lg-6 col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control add_user_input" asp-for="Username" id="floatingInput"
+                        placeholder="name@example.com">
+                    <label for="floatingInput">User Name*</label>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 mt-3">
+
+                <div class="form-floating">
+                    <select class="form-select addUserDropdown" style="height: 60px !important;" asp-for="Rolename"
+                        aria-label="Default select example">
+                        <option selected value="">Select Role</option>
+                        <option value="1">Admin</option>
+                        <option value="2">Account Manager</option>
+                        <option value="3">Chef</option>
+                    </select>
+                    <label class="fs-6" for="floatingInput">Role*</label>
+                    <span asp-validation-for="Rolename" class="text-danger"></span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row mx-0">
+            <div class="col-lg-6 col-md-6 mt-3">
+                <div class="form-floating">
+                    <input type="email" class="form-control add_user_input" asp-for="Email" id="exampleInput"
+                        aria-describedby="emailHelp" placeholder="Email">
+                    <label for="floatingInput">Email*</label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 mt-3">
+                <div class="form-floating">
+                    <input style="position: relative;" type="password" class="form-control add_user_input"
+                        asp-for="Password" id="password" placeholder="abc@123">
+                    <i class="far fa-eye" id="togglePassword"
+                        style=" cursor: pointer; position: absolute;  right: 12px; margin-top: -37px;"></i>
+                    <label for="password">Password*</label>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row upload_div mx-0 mt-3">
+            <div class="col d-flex upload_div2 align-items-center browse_div justify-content-center w-100 border">
+                <div class="w-100">
+                    <button type="button"
+                        class="w-100 h-100 d-flex flex-column align-items-center justify-content-center upload_btn bg-white"
+                        onclick="openinputFile()">
+                        <img class="dashboard-icon img-fluid" id="ProfileImagePreview" width="25" height="100"
+                            src="~/images/Download/cloud-arrow-up.svg" alt="">
+                        <span id="BrowseFileSpan">Browse file</span>
+                        <span id="uploadValidationMsg" class="text-danger"></span>
+                    </button>
+                    <input id="inputFile" asp-for="ProfileImage" accept="image/*" class="d-none" type="file">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mx-0">
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+                <div class="form-floating ">
+                    <select class="form-select addUserDropdown" style="height: 60px !important;" asp-for="Country"
+                        id="Country">
+                        <option value="">Select Country</option>
+                    </select>
+                    <label class="fs-6" for="Country">Country*</label>
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+                <div class="form-floating ">
+                    <select class="form-select addUserDropdown" style="height: 60px !important;" asp-for="State"
+                        id="State">
+                        <option value="">Select State</option>
+                    </select>
+                    <label class="fs-6" for="State">State*</label>
+                    <span asp-validation-for="State" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+                <div class="form-floating ">
+                    <select class="form-select addUserDropdown" style="height: 60px !important;" asp-for="City"
+                        id="City">
+                        <option value="">Select City</option>
+                    </select>
+                    <label class="fs-6" for="City">City*</label>
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mx-0">
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control add_user_input" asp-for="Zipcode" id="floatingInput"
+                        placeholder="name@example.com">
+                    <label for="floatingInput">Zipcode*</label>
+                    <span asp-validation-for="Zipcode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control add_user_input" asp-for="Address" id="floatingInput"
+                        placeholder="name@example.com">
+                    <label for="floatingInput">Address*</label>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-3">
+                <div class="form-floating">
+                    <input type="text" class="form-control add_user_input" asp-for="Phone" id="floatingInput"
+                        placeholder="name@example.com">
+                    <label for="floatingInput">Phone*</label>
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="create_cancel_btn d-flex py-3">
+            <button type="submit" class="btn custom-btn-bg  align-items-center text-white me-2">Create User</button>
+            <button onclick="PageReload()" type="button" class="btn custom-blue-borderBtn custom-blue-color">Cancel</button>
+        </div>
+
+    </div>
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="~/js/AddUserView.js"></script>
