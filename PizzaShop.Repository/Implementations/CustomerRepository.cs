@@ -51,8 +51,8 @@ public class CustomerRepository : ICustomerRepository
                 : query.OrderByDescending(u => u.Createdat),
 
             "Total Order" => model.SortOrder == "asc"
-                ? query.OrderBy(u => u.Orders.Sum(o => o.Totalamount))
-                : query.OrderByDescending(u => u.Orders.Sum(o => o.Totalamount)),
+                ? query.OrderBy(u => u.Orders.Count(o => o.Customerid == u.Customerid))
+                : query.OrderByDescending(u => u.Orders.Count(o => o.Customerid == u.Customerid)),
 
             _ => query.OrderBy(u => u.Customerid)
         };
@@ -67,10 +67,12 @@ public class CustomerRepository : ICustomerRepository
                     startDate = now.AddDays(-7);
                     query = query.Where(o => o.Createdat >= startDate);
                     break;
+                    
                 case "Last 30 days":
                     startDate = now.AddDays(-30);
                     query = query.Where(o => o.Createdat >= startDate);
                     break;
+
                 case "Current Month":
                     startDate = new DateTime(now.Year, now.Month, 1);
                     query = query.Where(o => o.Createdat >= startDate);
@@ -157,8 +159,8 @@ public class CustomerRepository : ICustomerRepository
                 : query.OrderByDescending(u => u.Createdat),
 
             "Total Order" => model.SortOrder == "asc"
-                ? query.OrderBy(u => u.Orders.Sum(o => o.Totalamount))
-                : query.OrderByDescending(u => u.Orders.Sum(o => o.Totalamount)),
+                ? query.OrderBy(u => u.Orders.Count(o => o.Customerid == u.Customerid))
+                : query.OrderByDescending(u => u.Orders.Count(o => o.Customerid == u.Customerid)),
 
             _ => query.OrderBy(u => u.Customerid)
         };

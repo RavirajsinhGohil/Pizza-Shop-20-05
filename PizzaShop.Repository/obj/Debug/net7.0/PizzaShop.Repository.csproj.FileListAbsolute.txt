@@ -13,3 +13,4 @@ C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Repository\obj\Debug\net7.0\PizzaS
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Repository\obj\Debug\net7.0\refint\PizzaShop.Repository.dll
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Repository\obj\Debug\net7.0\PizzaShop.Repository.pdb
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Repository\obj\Debug\net7.0\ref\PizzaShop.Repository.dll
+C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Repository\obj\Debug\net7.0\PizzaShop.Repository.sourcelink.json

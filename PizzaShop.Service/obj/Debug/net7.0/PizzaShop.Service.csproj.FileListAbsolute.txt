@@ -18,3 +18,4 @@ C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Service\obj\Debug\net7.0\refint\Pi
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Service\obj\Debug\net7.0\PizzaShop.Service.pdb
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Service\obj\Debug\net7.0\PizzaShop.Service.genruntimeconfig.cache
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Service\obj\Debug\net7.0\ref\PizzaShop.Service.dll
+C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Service\obj\Debug\net7.0\PizzaShop.Service.sourcelink.json

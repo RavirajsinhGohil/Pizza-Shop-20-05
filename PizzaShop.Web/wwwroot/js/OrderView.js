@@ -67,19 +67,19 @@ $(document).ready(function () {
     //  Handle Previous Page Click
     $(document).on('click', '#prevPage', function () {
         if (currentPage > 1) {
-            fetchItems(searchTerm, currentPage - 1, pageSize, sortBy, sortOrder, statusLog, timeLog, fromDate, toDate);
+            fetchItems(searchTerm, currentPage - 1, pageSize, sortBy, currentSortOrder, statusLog, timeLog, fromDate, toDate);
         }
     });
 
     $(document).on('click', '#nextPage', function () {
         if (currentPage < totalPages) {
-            fetchItems(searchTerm, currentPage + 1, pageSize, sortBy, sortOrder, statusLog, timeLog, fromDate, toDate);
+            fetchItems(searchTerm, currentPage + 1, pageSize, sortBy, currentSortOrder, statusLog, timeLog, fromDate, toDate);
         }
     });
 
     $(document).on('change', '#pageSizes', function () {
         pageSize = parseInt($(this).val()) || 5;
-        fetchItems(searchTerm, 1, pageSize, sortBy, sortOrder, statusLog, timeLog, fromDate, toDate);
+        fetchItems(searchTerm, 1, pageSize, sortBy, currentSortOrder, statusLog, timeLog, fromDate, toDate);
     });
 
     $(document).on('keyup', '#searchBox', function () {

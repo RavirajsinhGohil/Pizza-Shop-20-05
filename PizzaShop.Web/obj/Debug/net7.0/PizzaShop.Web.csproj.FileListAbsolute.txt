@@ -89,3 +89,4 @@ C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Web\obj\Debug\net7.0\refint\PizzaS
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Web\obj\Debug\net7.0\PizzaShop.Web.pdb
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Web\obj\Debug\net7.0\PizzaShop.Web.genruntimeconfig.cache
 C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Web\obj\Debug\net7.0\ref\PizzaShop.Web.dll
+C:\Users\ravir\Downloads\Pizza Shop\PizzaShop.Web\obj\Debug\net7.0\PizzaShop.Web.sourcelink.json
